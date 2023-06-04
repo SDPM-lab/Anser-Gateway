@@ -1,0 +1,31 @@
+{
+    "name": "sdpmlab/anser-gateway",
+    "description": "A PHP coroutine api gateway for distributed transaction.",
+    "keywords": [
+		"php",
+		"api-gateway",
+        "anser-Gateway",
+        "workerman",
+        "swow",
+        "framework"
+	],
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "SDPMlab\\AnserGateway\\": "system/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MonkenWu",
+            "homepage": "https://github.com/monkenWu"
+        },
+        {
+            "name": "KAI",
+            "homepage": "https://github.com/kai890707"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
