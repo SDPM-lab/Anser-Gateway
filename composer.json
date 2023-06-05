@@ -31,5 +31,8 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "swow/swow": "^1.2",
+        "workerman/workerman": "^4.1"
+    }
 }

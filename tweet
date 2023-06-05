@@ -1,0 +1,37 @@
+<?php
+
+//only run in command line
+if (PHP_SAPI !== 'cli') {
+    exit("Anser-Gateway only run in command line");
+}
+
+//PHP Extension Check
+if (!extension_loaded('swow')) {
+    exit("Anser-Gateway needed PHP extension: swow");
+}
+
+//PHP Version Check
+if (version_compare(PHP_VERSION, '8.1', '<')) {
+    exit("Anser-Gateway requires PHP version 8.2 or higher");
+}
+
+define('PROJECT_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
+define('PROJECT_CONFIG', PROJECT_ROOT . 'app' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+define('PROJECT_VENDOR', PROJECT_ROOT . 'vendor' . DIRECTORY_SEPARATOR);
+define('PROJECT_WRITABLE', PROJECT_ROOT . 'writable' . DIRECTORY_SEPARATOR);
+
+require PROJECT_CONFIG . 'Path.php';
+$boot = new \App\Config\Path();
+
+define('PROJECT_APP', $boot->appDirectory);
+define('PROJECT_SYSTEM', $boot->systemDirectory);
+
+require PROJECT_CONFIG . 'Autoloader.php';
+require PROJECT_SYSTEM . 'Autoloader.php';
+$autoLoader = new \AnserGateway\Autoloader((new \App\Config\Autoloader()));
+$autoLoader->systemRegister();
+
+$command = $argv[1] ?? '';
+if ($command == 'serve') {
+    \AnserGateway\Bootstrap::serverRun();
+}
