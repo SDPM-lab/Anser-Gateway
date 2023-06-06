@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Config;
+namespace Config;
 
 use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
