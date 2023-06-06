@@ -20,8 +20,24 @@ define('PROJECT_CONFIG', PROJECT_ROOT . 'config' . DIRECTORY_SEPARATOR);
 define('PROJECT_VENDOR', PROJECT_ROOT . 'vendor' . DIRECTORY_SEPARATOR);
 define('PROJECT_WRITABLE', PROJECT_ROOT . 'writable' . DIRECTORY_SEPARATOR);
 
+if(realpath(PROJECT_VENDOR) === false) {
+    exit("Anser-Gateway vendor directory not found, please run composer install");
+}
+
+if(realpath(PROJECT_WRITABLE) === false){
+    exit("Anser-Gateway writable directory not found.");
+}
+
 require PROJECT_CONFIG . 'Path.php';
 $path = new \Config\Path();
+
+if(realpath($path->appDirectory) === false ) {
+    exit("Anser-Gateway app directory not found, please check your config/Path.php");
+}
+
+if(realpath($path->systemDirectory) === false ) {
+    exit("Anser-Gateway system directory not found, please check your config/Path.php");
+}
 
 define('PROJECT_APP', realpath($path->appDirectory) . DIRECTORY_SEPARATOR );
 define('PROJECT_SYSTEM', realpath($path->systemDirectory) . DIRECTORY_SEPARATOR);
