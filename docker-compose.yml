@@ -4,7 +4,7 @@ services:
     app:
         build: ./
         ports:
-            - 8090:8080
+            - 8080:8080
         working_dir: /app
         environment: 
             - PHP_MEMORY_LIMIT=2048M
