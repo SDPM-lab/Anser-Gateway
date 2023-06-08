@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+    app:
+        build: ./
+        ports:
+            - 8080:8080
+        working_dir: /app
+        environment: 
+            - PHP_MEMORY_LIMIT=2048M
+            - PHP_MAX_EXECUTION_TIME=600
+            - PHP_POST_MAX_SIZE=200M
+            - PHP_UPLOAD_MAX_FILESIZE=200M
+            - XDEBUG_MODE=coverage
+        volumes:
+            - './:/app'
