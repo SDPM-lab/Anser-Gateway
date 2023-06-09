@@ -3,7 +3,7 @@
 namespace AnserGateway\Worker;
 
 use AnserGateway\Worker\WorkerRegistrar;
-use App\Config\Gateway;
+use Config\Gateway;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Workerman\Timer;

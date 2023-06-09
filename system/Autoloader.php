@@ -2,7 +2,7 @@
 
 namespace AnserGateway;
 
-use App\Config\Autoloader as AutoloaderConfig;
+use Config\Autoloader as AutoloaderConfig;
 
 class Autoloader
 {

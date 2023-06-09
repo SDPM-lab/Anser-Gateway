@@ -4,7 +4,7 @@ namespace AnserGateway\Worker;
 
 use AnserGateway\Autoloader;
 use AnserGateway\Worker\WorkerRegistrar;
-use App\Config\Gateway;
+use Config\Gateway;
 use Workerman\Connection\TcpConnection;
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;

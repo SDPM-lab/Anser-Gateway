@@ -16,19 +16,35 @@ if (version_compare(PHP_VERSION, '8.1', '<')) {
 }
 
 define('PROJECT_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
-define('PROJECT_CONFIG', PROJECT_ROOT . 'app' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+define('PROJECT_CONFIG', PROJECT_ROOT . 'config' . DIRECTORY_SEPARATOR);
 define('PROJECT_VENDOR', PROJECT_ROOT . 'vendor' . DIRECTORY_SEPARATOR);
 define('PROJECT_WRITABLE', PROJECT_ROOT . 'writable' . DIRECTORY_SEPARATOR);
 
-require PROJECT_CONFIG . 'Path.php';
-$boot = new \App\Config\Path();
+if(realpath(PROJECT_VENDOR) === false) {
+    exit("Anser-Gateway vendor directory not found, please run composer install");
+}
 
-define('PROJECT_APP', $boot->appDirectory);
-define('PROJECT_SYSTEM', $boot->systemDirectory);
+if(realpath(PROJECT_WRITABLE) === false){
+    exit("Anser-Gateway writable directory not found.");
+}
+
+require PROJECT_CONFIG . 'Path.php';
+$path = new \Config\Path();
+
+if(realpath($path->appDirectory) === false ) {
+    exit("Anser-Gateway app directory not found, please check your config/Path.php");
+}
+
+if(realpath($path->systemDirectory) === false ) {
+    exit("Anser-Gateway system directory not found, please check your config/Path.php");
+}
+
+define('PROJECT_APP', realpath($path->appDirectory) . DIRECTORY_SEPARATOR );
+define('PROJECT_SYSTEM', realpath($path->systemDirectory) . DIRECTORY_SEPARATOR);
 
 require PROJECT_CONFIG . 'Autoloader.php';
 require PROJECT_SYSTEM . 'Autoloader.php';
-$autoLoader = new \AnserGateway\Autoloader((new \App\Config\Autoloader()));
+$autoLoader = new \AnserGateway\Autoloader((new \Config\Autoloader()));
 $autoLoader->systemRegister();
 
 $command = $argv[1] ?? '';

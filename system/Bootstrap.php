@@ -3,7 +3,7 @@
 namespace AnserGateway;
 
 use AnserGateway\WorkerContainer;
-use App\Config\Gateway;
+use Config\Gateway;
 
 class Bootstrap
 {
