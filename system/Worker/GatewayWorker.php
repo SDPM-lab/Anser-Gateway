@@ -11,7 +11,9 @@ use Workerman\Protocols\Http\Response;
 use Workerman\Worker;
 use AnserGateway\Worker\Swow;
 use Swow\Coroutine;
-
+use AnserGateway\Router\RouteCollector;
+use AnserGateway\Router\Router;
+use AnserGateway\AnserGateway;
 
 class GatewayWorker extends WorkerRegistrar
 {
@@ -25,7 +27,7 @@ class GatewayWorker extends WorkerRegistrar
 
     public function initWorker(): Worker
     {
-        $config = $this->gatewayConfig;
+        $config    = $this->gatewayConfig;
 
         $webWorker = new Worker(
             sprintf(
@@ -52,17 +54,22 @@ class GatewayWorker extends WorkerRegistrar
             Autoloader::$instance->appRegister();
             Autoloader::$instance->composerRegister();
             //此處開始框架其他部件初始化
-
+           
         };
 
         // Worker
-        $webWorker->onMessage = static function (TcpConnection $connection, Request $request) use ($config) {
-            Coroutine::run(static function () use ($connection, $request, $config) : void {
+        $webWorker->onMessage = static function (TcpConnection $connection, Request $request) use ($config,) {
+            Coroutine::run(static function () use ($connection, $request, $config,) : void {
                 $config->runtimeTcpConnection($connection, $request);
 
-                //此處開始框架邏輯進入點
+                # Do get routeCollector and new a Router class 
+                $routeList = RouteCollector::loadRoutes();
+                $router    = new Router($routeList);
+                # Injection Router class to AnserGateway
+                $gateway   = new AnserGateway($router);
+
                 try {
-                    //code...
+                    $workermanResponse = $gateway->handleRequest($request);
                 } catch (\Exception $e) {
                     $workermanResponse = new Response(
                         500,
@@ -71,18 +78,18 @@ class GatewayWorker extends WorkerRegistrar
                         ],
                         json_encode([
                             'code' => 500,
-                            'msg' => 'Server Error.',
+                            'msg' => $e->getMessage(),
                             'data' => null
                         ])  
                     );    
                 }
 
                 //此處將響應轉換成 Workerman 的 Response
-                $workermanResponse = new Response(
-                    200,
-                    [],
-                    ''
-                );
+                // $workermanResponse = new Response(
+                //     200,
+                //     [],
+                //     ''
+                // );
                 $connection->send($workermanResponse);
             });
         
