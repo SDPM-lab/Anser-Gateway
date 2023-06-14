@@ -1,6 +1,9 @@
-<?php 
+<?php
+
 namespace App\Controllers\V1;
+
 use App\Controllers\BaseController;
+
 class TestController extends BaseController
 {
     public function index()
@@ -13,4 +16,3 @@ class TestController extends BaseController
         return $this->response->withStatus(200)->withBody($body);
     }
 }
-?>

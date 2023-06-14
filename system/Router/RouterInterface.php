@@ -1,9 +1,11 @@
-<?php 
+<?php
+
 namespace AnserGateway\Router;
 
 use Workerman\Protocols\Http\Request;
-interface RouterInterface {
-    
+
+interface RouterInterface
+{
     /**
      * 儲存對RouteCollection物件的引用
      *
@@ -19,7 +21,7 @@ interface RouterInterface {
      * @param string $uri 相對於baseURL的URI路徑
      *
      */
-    public function handle( $httpMethod, $uri);
+    public function handle($httpMethod, $uri);
 
     /**
      * 回傳所有Filter
@@ -27,7 +29,7 @@ interface RouterInterface {
      * @return array
      */
     public function getFilters();
-    
+
     /**
      * 回傳配對到的Controller名稱
      *
@@ -51,5 +53,3 @@ interface RouterInterface {
     public function getParams();
 
 }
-
-?>

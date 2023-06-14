@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace AnserGateway\Router;
 
 class RouteCollector extends RouteCollection
@@ -29,16 +30,13 @@ class RouteCollector extends RouteCollection
             return self::$routeList;
         }
 
-        try{
+        try {
             self::$routeList   = require_once $routesFile;
             self::$didDiscover = true;
-        }catch(\Exception $th){
+        } catch(\Exception $th) {
             throw $th;
         }
-    
+
         return self::$routeList;
     }
 }
-
-
-?>

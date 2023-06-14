@@ -54,15 +54,15 @@ class GatewayWorker extends WorkerRegistrar
             Autoloader::$instance->appRegister();
             Autoloader::$instance->composerRegister();
             //此處開始框架其他部件初始化
-           
+
         };
 
         // Worker
-        $webWorker->onMessage = static function (TcpConnection $connection, Request $request) use ($config,) {
-            Coroutine::run(static function () use ($connection, $request, $config,) : void {
+        $webWorker->onMessage = static function (TcpConnection $connection, Request $request) use ($config) {
+            Coroutine::run(static function () use ($connection, $request, $config): void {
                 $config->runtimeTcpConnection($connection, $request);
 
-                # Do get routeCollector and new a Router class 
+                # Do get routeCollector and new a Router class
                 $routeList = RouteCollector::loadRoutes();
                 $router    = new Router($routeList);
                 # Injection Router class to AnserGateway
@@ -80,8 +80,8 @@ class GatewayWorker extends WorkerRegistrar
                             'code' => 500,
                             'msg' => $e->getMessage(),
                             'data' => null
-                        ])  
-                    );    
+                        ])
+                    );
                 }
 
                 //此處將響應轉換成 Workerman 的 Response
@@ -92,8 +92,8 @@ class GatewayWorker extends WorkerRegistrar
                 // );
                 $connection->send($workermanResponse);
             });
-        
-            
+
+
         };
 
         return $webWorker;

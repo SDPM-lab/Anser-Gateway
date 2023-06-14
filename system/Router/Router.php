@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace AnserGateway\Router;
 
 use FastRoute\Dispatcher;
@@ -8,8 +9,9 @@ use AnserGateway\Router\RouteCollector;
 use Closure;
 
 use function FastRoute\simpleDispatcher;
-class Router implements RouterInterface{
 
+class Router implements RouterInterface
+{
     /**
      * RouteCollector
      *
@@ -25,10 +27,10 @@ class Router implements RouterInterface{
 
     /**
      * 當前路由對應的Controller名稱
-     *  
+     *
      * @var Closure|string
      */
-    protected  $controller;
+    protected $controller;
 
     /**
      * 當前路由對應的method名稱
@@ -51,7 +53,7 @@ class Router implements RouterInterface{
      */
     protected array $filters = [];
 
-    public function __construct($routes)  
+    public function __construct($routes)
     {
         $this->collector  = $routes;
         $this->dispatcher = $this->dispatcher($routes);
@@ -63,35 +65,34 @@ class Router implements RouterInterface{
      * @param string $httpMethod
      * @param string $uri
      */
-    public function handle($httpMethod,$uri)
+    public function handle($httpMethod, $uri)
     {
-         if (false !== $pos = strpos($uri, '?')) {
-             $uri = substr($uri, 0, $pos);
-         }
-         
-         $uri = rawurldecode($uri);
+        if (false !== $pos = strpos($uri, '?')) {
+            $uri = substr($uri, 0, $pos);
+        }
 
-         // 路由調度
-         $routeInfo = $this->dispatcher->dispatch($httpMethod, $uri);
-         
-         switch ($routeInfo[0]) {
-             case Dispatcher::NOT_FOUND: 
+        $uri = rawurldecode($uri);
+
+        // 路由調度
+        $routeInfo = $this->dispatcher->dispatch($httpMethod, $uri);
+
+        switch ($routeInfo[0]) {
+            case Dispatcher::NOT_FOUND:
                 throw RouteException::forRouteNotExist($uri);
                 break;
-             case Dispatcher::METHOD_NOT_ALLOWED:
+            case Dispatcher::METHOD_NOT_ALLOWED:
                 $allowedMethods = $routeInfo[1];
                 throw RouteException::forMethodNotAllowed($httpMethod, $allowedMethods[0]);
                 break;
-             case Dispatcher::FOUND: // 請求配對成功，回傳找到的路由資料
-               
+            case Dispatcher::FOUND: // 請求配對成功，回傳找到的路由資料
+
                 $this->resetFilters();
-                if($this->checkRoute($routeInfo))
-                {
+                if($this->checkRoute($routeInfo)) {
                     return $this->controller;
                 }
                 throw RouteException::forControllerNotExist($routeInfo[1]['handler'][0]);
                 break;
-         }
+        }
     }
 
     /**
@@ -115,7 +116,7 @@ class Router implements RouterInterface{
      */
     protected function checkRoute($routeInfo): bool
     {
-        
+
         if (empty($routeInfo[1])) {
             return false;
         }
@@ -132,22 +133,21 @@ class Router implements RouterInterface{
 
             $this->params = $params;
 
-            $this->setFilter($options,$group);
+            $this->setFilter($options, $group);
 
             return true;
         }
 
         $controller = $handler[0];
         $method     = $handler[1];
-        
+
         if (strpos($controller, '/') !== false) {
             throw RouteException::forInvalidControllerName($handler);
         }
 
-        if ($this->scanHandler($controller))
-        {   
-            $this->setFilter($options,$group);
-            $this->setRequest($controller,$method,$params);
+        if ($this->scanHandler($controller)) {
+            $this->setFilter($options, $group);
+            $this->setRequest($controller, $method, $params);
 
             return true;
         }
@@ -155,12 +155,11 @@ class Router implements RouterInterface{
         return false;
     }
 
-    protected function setRequest($controller,$method,$params)
+    protected function setRequest($controller, $method, $params)
     {
         $this->controller = $controller;
 
-        if (! empty($method))
-        {
+        if (! empty($method)) {
             $this->method = $method;
         }
 
@@ -173,11 +172,11 @@ class Router implements RouterInterface{
      * @return bool
      */
     protected function scanHandler($controller): bool
-    {   
-        $controllerName        = explode('App\\Controllers\\',$controller)[1];
-        $replaceControllerName = str_replace('\\', DIRECTORY_SEPARATOR , $controllerName);
+    {
+        $controllerName        = explode('App\\Controllers\\', $controller)[1];
+        $replaceControllerName = str_replace('\\', DIRECTORY_SEPARATOR, $controllerName);
 
-        if (! is_file(PROJECT_APP . 'HTTP' . DIRECTORY_SEPARATOR . 'Controllers'  . DIRECTORY_SEPARATOR . $replaceControllerName.'.php')){
+        if (! is_file(PROJECT_APP . 'HTTP' . DIRECTORY_SEPARATOR . 'Controllers'  . DIRECTORY_SEPARATOR . $replaceControllerName.'.php')) {
             throw RouteException::forControllerFileNotExist($controller);
         }
 
@@ -191,15 +190,13 @@ class Router implements RouterInterface{
      * @param array $group
      * @return void
      */
-    protected function setFilter($options,$group): void
+    protected function setFilter($options, $group): void
     {
-        if (! empty($group) && isset($group['filter']))
-        {
+        if (! empty($group) && isset($group['filter'])) {
             $this->filters['group'] = $group['filter'];
-        }   
+        }
 
-        if (! empty($options) && isset($options['filter']) ) 
-        {
+        if (! empty($options) && isset($options['filter'])) {
             $this->filters['route'] = $options['filter'];
         }
     }
@@ -243,5 +240,3 @@ class Router implements RouterInterface{
         return $this->params ?? null;
     }
 }
-
-?>

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace AnserGateway\Filters;
 
 use Workerman\Protocols\Http\Request;
@@ -15,7 +16,7 @@ class JsonResponseFilter implements FilterInterface
      */
     public function before(Request $request, $arguments = null)
     {
-        
+
     }
 
     /**
@@ -27,12 +28,10 @@ class JsonResponseFilter implements FilterInterface
      * @return mixed
      */
     public function after(Request $request, Response $response, $arguments = null)
-    {   
+    {
         # 將response header 加上Content-Type => application/json charset=utf-8
-        $response->withHeader('Content-Type' , 'application/json charset=utf-8');
+        $response->withHeader('Content-Type', 'application/json charset=utf-8');
 
         return $response;
     }
 }
-
-?>

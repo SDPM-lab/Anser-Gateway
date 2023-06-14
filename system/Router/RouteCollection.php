@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace AnserGateway\Router;
 
 use AnserGateway\Router\RouteCollectionInterface;
@@ -12,8 +13,8 @@ abstract class RouteCollection implements RouteCollectionInterface
 
     /** @var DataGenerator */
     protected $dataGenerator;
-    
-    
+
+
     /** @var string */
     protected $currentGroupPrefix;
 
@@ -37,7 +38,7 @@ abstract class RouteCollection implements RouteCollectionInterface
         $this->dataGenerator = $dataGenerator;
         $this->currentGroupPrefix = '';
     }
-    
+
     /**
      * Adds a route to the collection.
      *
@@ -91,7 +92,7 @@ abstract class RouteCollection implements RouteCollectionInterface
      * @param mixed  $handler
      * @param array  $options
      */
-    public function get(string $route,mixed $handler,array $options = [])
+    public function get(string $route, mixed $handler, array $options = [])
     {
         $remixHandler = [
             'handler' => $handler,
@@ -109,7 +110,7 @@ abstract class RouteCollection implements RouteCollectionInterface
      * @param mixed  $handler
      * @param array  $options
      */
-    public function post(string $route,mixed $handler,array $options = [])
+    public function post(string $route, mixed $handler, array $options = [])
     {
         $remixHandler = [
             'handler' => $handler,
@@ -126,7 +127,7 @@ abstract class RouteCollection implements RouteCollectionInterface
      * @param mixed  $handler
      * @param array  $options
      */
-    public function put(string $route,mixed $handler,array $options = [])
+    public function put(string $route, mixed $handler, array $options = [])
     {
         $remixHandler = [
             'handler' => $handler,
@@ -143,7 +144,7 @@ abstract class RouteCollection implements RouteCollectionInterface
      * @param mixed  $handler
      * @param array  $options
      */
-    public function delete(string $route,mixed $handler,array $options = [])
+    public function delete(string $route, mixed $handler, array $options = [])
     {
         $remixHandler = [
             'handler' => $handler,
@@ -160,7 +161,7 @@ abstract class RouteCollection implements RouteCollectionInterface
      * @param mixed  $handler
      * @param array  $options
      */
-    public function patch(string $route,mixed $handler,array $options = [])
+    public function patch(string $route, mixed $handler, array $options = [])
     {
         $remixHandler = [
             'handler' => $handler,
@@ -177,7 +178,7 @@ abstract class RouteCollection implements RouteCollectionInterface
      * @param mixed  $handler
      * @param array  $options
      */
-    public function head(string $route,mixed $handler,array $options = [])
+    public function head(string $route, mixed $handler, array $options = [])
     {
         $remixHandler = [
             'handler' => $handler,
@@ -194,7 +195,7 @@ abstract class RouteCollection implements RouteCollectionInterface
      * @param mixed  $handler
      * @param array  $options
      */
-    public function options(string $route,mixed $handler,array $options = [])
+    public function options(string $route, mixed $handler, array $options = [])
     {
         $remixHandler = [
             'handler' => $handler,
@@ -216,8 +217,3 @@ abstract class RouteCollection implements RouteCollectionInterface
 
 
 }
-
-
-
-
-?>

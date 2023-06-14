@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace AnserGateway;
 
 use AnserGateway\Router\Router;
@@ -52,10 +53,10 @@ class AnserGateway
      */
     protected $params;
 
-    public function __construct(RouterInterface $router) 
+    public function __construct(RouterInterface $router)
     {
         /**
-         * Injection route,if you want get routeCollector 
+         * Injection route,if you want get routeCollector
          * can use $this->router->collector;
          */
         $this->router    = $router;
@@ -63,23 +64,22 @@ class AnserGateway
     }
 
     public function handleRequest(Request $request)
-    {   
+    {
         $uri           = $request->uri();
         $httpMethod    = $request->method();
         $this->request = $request;
-        
-        $routeFilter = $this->tryToRouteIt($httpMethod,$uri);
-  
-        $filters = new Filters($this->request,$this->response);
-        
+
+        $routeFilter = $this->tryToRouteIt($httpMethod, $uri);
+
+        $filters = new Filters($this->request, $this->response);
+
         # Do before() filter
-        if ($routeFilter !== null)
-        {
+        if ($routeFilter !== null) {
             $filters->enableFilters($routeFilter, 'before');
             $filters->enableFilters($routeFilter, 'after');
         }
 
-        $possibleResponse = $filters->run($uri,'before');
+        $possibleResponse = $filters->run($uri, 'before');
 
         // 如果回傳一個response類型的回傳值，則直接響應
         if ($possibleResponse instanceof Response) {
@@ -89,7 +89,7 @@ class AnserGateway
         if ($possibleResponse instanceof Request) {
             $this->request = $possibleResponse;
         }
- 
+
         # Closure 在此方法執行
         $returned = $this->startController();
 
@@ -127,13 +127,13 @@ class AnserGateway
      * @param string $uri
      * @return array|null
      */
-    public function tryToRouteIt($httpMethod,$uri)
+    public function tryToRouteIt($httpMethod, $uri)
     {
 
-        $this->controller = $this->router->handle($httpMethod,$uri);
+        $this->controller = $this->router->handle($httpMethod, $uri);
         $this->method     = $this->router->getMethod();
         $this->params     = $this->router->getParams();
-        
+
         return $this->router->getFilters();
     }
 
@@ -149,12 +149,12 @@ class AnserGateway
             $controller = $this->controller;
 
             # 或許我們需要將執行週期的request、response傳入Closure中
-            return $controller($this->router->getParams(),$this->request,$this->response);
+            return $controller($this->router->getParams(), $this->request, $this->response);
         }
 
         // 無指定controller 拋出 Exception
         if (empty($this->controller)) {
-           throw RouteException::forEmptyController();
+            throw RouteException::forEmptyController();
         }
 
         // 嘗試使用autoload找尋該controller
@@ -163,14 +163,12 @@ class AnserGateway
         }
 
         // 該controller並未繼承 BaseController 則視為非\AnserGateway\Controller類型，拋出Exception
-        if (! new $this->controller instanceof \AnserGateway\Controller)
-        {
+        if (! new $this->controller() instanceof \AnserGateway\Controller) {
             throw RouteException::forControllerNotValid($this->controller);
         }
 
-        // 該controller內找不到對應method，拋出Exception 
-        if (!method_exists($this->controller, $this->method))
-        {
+        // 該controller內找不到對應method，拋出Exception
+        if (!method_exists($this->controller, $this->method)) {
             throw RouteException::forControllerMethodNotExist($this->controller, $this->method);
         }
     }
@@ -207,4 +205,3 @@ class AnserGateway
         return $output;
     }
 }
-?>

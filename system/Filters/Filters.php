@@ -1,13 +1,14 @@
-<?php 
+<?php
+
 namespace AnserGateway\Filters;
 
 use Exception;
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use AnserGateway\Filters\Exception\FilterException;
+
 class Filters
 {
-
     // protected $filterPath = PROJECT_CONFIG . 'Filters.php';
 
     /**
@@ -78,7 +79,7 @@ class Filters
     {
         $this->request = &$request;
         $this->setResponse($response);
-        $this->config = new \Config\Filters;
+        $this->config = new \Config\Filters();
     }
 
     public function setResponse(Response $response)
@@ -86,10 +87,10 @@ class Filters
         $this->response = $response;
     }
 
-    public function run(string $uri,string $position = 'before') 
+    public function run(string $uri, string $position = 'before')
     {
         $this->initialize($uri);
-        
+
         foreach ($this->filtersClass[$position] as $className) {
             $class = new $className();
 
@@ -138,7 +139,7 @@ class Filters
     /**
      * 參考CodeIgniter Filter
      * 將路由相關的filter進行規則判斷，例如某些路由不需要套用某個filter
-     * 
+     *
      * @return Filters
      */
     public function initialize(?string $uri = null)
@@ -148,7 +149,7 @@ class Filters
         }
 
         $this->processGlobals($uri);
-      
+
         // 預設jsonResponse最後執行
         if (in_array('jsonResponse', $this->filters['after'], true)
             && ($count = count($this->filters['after'])) > 1
@@ -224,7 +225,7 @@ class Filters
      */
     public function enableFilter(string $name, string $when = 'before')
     {
-    
+
         // 設定filter後夾帶的參數
         if (strpos($name, ':') !== false) {
             [$name, $params] = explode(':', $name);
@@ -244,10 +245,10 @@ class Filters
             throw FilterException::forNoAlias($name);
         }
 
-        
+
         //取得別名對應的class
         $classNames = (array) $this->config->aliases[$name];
-        
+
         foreach ($classNames as $className) {
             $this->argumentsClass[$className] = $this->arguments[$name] ?? null;
         }
@@ -271,7 +272,7 @@ class Filters
      * @return Filters
      */
     public function enableFilters(array $names, string $when = 'before')
-    {   
+    {
         // var_dump($names);
         foreach ($names as $filter) {
             $this->enableFilter($filter, $when);
@@ -290,9 +291,9 @@ class Filters
         if (! isset($this->config->globals) || ! is_array($this->config->globals)) {
             return;
         }
-        
+
         $uri = strtolower(trim($uri ?? '', '/ '));
-        
+
         // // Add any global filters, unless they are excluded for this URI
         $sets = ['before', 'after'];
 
@@ -320,7 +321,7 @@ class Filters
                 }
             }
         }
-       
+
     }
 
     /**
@@ -388,5 +389,3 @@ class Filters
         return false;
     }
 }
-
-?>

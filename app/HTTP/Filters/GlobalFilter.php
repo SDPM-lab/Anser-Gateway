@@ -1,12 +1,13 @@
-<?php 
+<?php
+
 namespace App\Filters;
 
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use AnserGateway\Filters\FilterInterface;
 
-class GlobalFilter implements FilterInterface{
-
+class GlobalFilter implements FilterInterface
+{
     /**
      *
      * @param Request    $request
@@ -16,7 +17,7 @@ class GlobalFilter implements FilterInterface{
      */
     public function before(Request $request, $arguments = null)
     {
-        // 
+        //
     }
 
     /**
@@ -33,6 +34,3 @@ class GlobalFilter implements FilterInterface{
     }
 
 }
-
-
-?>

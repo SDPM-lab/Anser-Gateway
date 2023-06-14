@@ -1,11 +1,12 @@
-<?php 
+<?php
+
 namespace AnserGateway;
 
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 
-class Controller {
-
+class Controller
+{
     /**
      * Instance of the main Request object.
      *
@@ -21,7 +22,7 @@ class Controller {
     protected $response;
 
     /**
-     * 
+     *
      *
      * @var string|null
      */
@@ -29,7 +30,7 @@ class Controller {
     /**
      * Instance of logger to use.
      *
-     * @var 
+     * @var
      */
     protected $logger;
 
@@ -39,4 +40,3 @@ class Controller {
         $this->response = $response;
     }
 }
-?>

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace AnserGateway\Router\Exception;
 
 use AnserGateway\Exception\AnserGatewayException;
@@ -25,7 +26,7 @@ class RouteException extends AnserGatewayException
         return new self("{$handler} Namespace分隔符號為反斜線(\)，非斜線(/)");
     }
 
-    public static function forMethodNotAllowed($httpMethod,$allowedMethods): RouteException
+    public static function forMethodNotAllowed($httpMethod, $allowedMethods): RouteException
     {
         return new self("請求類型錯誤({$httpMethod}),當前允許的請求類型({$allowedMethods})");
     }
@@ -39,12 +40,12 @@ class RouteException extends AnserGatewayException
     {
         return new self("找無指定的Controller");
     }
-    
+
     public static function forControllerNotExist($controllerName): RouteException
     {
         return new self("Controller - {$controllerName} 不存在，請確認是否已定義名稱為 {$controllerName} 的Controller");
     }
-    public static function forControllerMethodNotExist($controllerName,$controllerMethodName): RouteException
+    public static function forControllerMethodNotExist($controllerName, $controllerMethodName): RouteException
     {
         return new self("Controller - {$controllerName} 中不存在名稱為 - {$controllerMethodName} 的方法");
     }
@@ -53,8 +54,6 @@ class RouteException extends AnserGatewayException
     {
         return new self("Controller - {$controller} 尚未繼承 AnserGateway\Config\BaseController類別");
     }
-    
-    
-}
 
-?>
+
+}

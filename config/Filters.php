@@ -1,11 +1,13 @@
 <?php
 
 namespace Config;
+
 use AnserGateway\Filters\JsonResponseFilter;
 use App\Filters\TestFilter;
 use App\Filters\TestFilter2;
 use App\Filters\GlobalFilter;
-class Filters 
+
+class Filters
 {
     /**
      * Configures aliases for Filter classes to
@@ -24,7 +26,7 @@ class Filters
      */
     public array $globals = [
         'before' => [
-            // 'global' 
+            // 'global'
             // 'global' => ['except' => 'api/*'],
         ],
         'after' => [

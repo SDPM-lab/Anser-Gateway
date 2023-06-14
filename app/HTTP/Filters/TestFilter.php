@@ -1,12 +1,13 @@
-<?php 
+<?php
+
 namespace App\Filters;
 
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use AnserGateway\Filters\FilterInterface;
 
-class TestFilter implements FilterInterface{
-
+class TestFilter implements FilterInterface
+{
     /**
      *
      * @param Request    $request
@@ -16,7 +17,7 @@ class TestFilter implements FilterInterface{
      */
     public function before(Request $request, $arguments = null)
     {
-        // 
+        //
         var_dump("Test before");
     }
 
@@ -35,6 +36,3 @@ class TestFilter implements FilterInterface{
     }
 
 }
-
-
-?>

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace AnserGateway\Filters\Exception;
 
 use AnserGateway\Exception\AnserGatewayException;
@@ -24,6 +25,5 @@ class FilterException extends AnserGatewayException
     {
         return new self("{$class} 必須實作 AnserGateway/Filters/FilterInterface");
     }
-    
+
 }
-?>

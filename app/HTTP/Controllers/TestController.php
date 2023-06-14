@@ -1,5 +1,7 @@
-<?php 
+<?php
+
 namespace App\Controllers;
+
 use App\Controllers\BaseController;
 
 class TestController extends BaseController
@@ -13,9 +15,7 @@ class TestController extends BaseController
                 "asd"=>123
             ]
         );
-
         
-
         return $this->response->withStatus(200)->withBody($body);
     }
 
@@ -25,4 +25,3 @@ class TestController extends BaseController
         return $this->response->withStatus(200)->withBody($data);
     }
 }
-?>

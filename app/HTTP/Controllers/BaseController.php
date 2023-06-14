@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Controllers;
 
 use AnserGateway\Controller;
@@ -25,22 +26,13 @@ abstract class BaseController extends Controller
     protected $request;
 
     /**
-     * Be sure to declare properties for any property fetch you initialized.
-     * The creation of dynamic property is deprecated in PHP 8.2.
+     * 注入Request 與 Response
      */
-    // protected $session;
-
     /**
      * Constructor.
      */
     public function initController(Request $request, Response $response)
     {
-        // Do Not Edit This Line
         parent::initController($request, $response);
-
-        // Preload any models, libraries, etc, here.
-
-        // E.g.: $this->session = \Config\Services::session();
     }
 }
-?>
