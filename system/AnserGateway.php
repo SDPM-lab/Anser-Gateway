@@ -52,14 +52,6 @@ class AnserGateway
      */
     protected $params;
 
-    
-    /**
-     * Output handler to use.
-     *
-     * @var string
-     */
-    protected $output;
-
     public function __construct(RouterInterface $router) 
     {
         /**
