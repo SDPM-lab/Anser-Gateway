@@ -36,7 +36,7 @@ class WorkerContainer
 
     /**
      * Init and run all workers
-     * 
+     *
      * @return void
      */
     public static function run()

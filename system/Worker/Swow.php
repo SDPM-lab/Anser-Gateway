@@ -7,16 +7,18 @@ use Swow\Coroutine;
 use Swow\Signal;
 use Swow\SignalException;
 use Workerman\Worker;
+use Workerman\Events\EventInterface;
+
 use function getmypid;
 use function max;
 use function msleep;
 use function stream_poll_one;
 use function Swow\Sync\waitAll;
+
 use const STREAM_POLLHUP;
 use const STREAM_POLLIN;
 use const STREAM_POLLNONE;
 use const STREAM_POLLOUT;
-use Workerman\Events\EventInterface;
 
 class Swow implements EventInterface
 {
@@ -289,6 +291,7 @@ class Swow implements EventInterface
                 } else {
                     return $this->delay($fd, $func, $args);
                 }
+                // no break
             case self::EV_READ:
                 return $this->onReadable($fd, $func);
             case self::EV_WRITE:
