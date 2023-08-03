@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1691082514">
-  <project timestamp="1691082514">
+<coverage generated="1691083575">
+  <project timestamp="1691083575">
     <file name="/app/system/AnserGateway.php">
       <class name="AnserGateway\AnserGateway" namespace="global">
         <metrics complexity="18" methods="6" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="48" elements="55" coveredelements="53"/>
