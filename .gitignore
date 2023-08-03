@@ -2,6 +2,6 @@
 /.env
 /writable/*
 .php-cs-fixer.cache
-./report
+./report/*
 ./build
 .phpunit.cache
