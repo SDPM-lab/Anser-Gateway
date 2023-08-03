@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Filters;
+namespace Test\Support\Filters\Filters;
 
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
-use AnserGateway\Filters\FilterInterface;
 
-class GlobalFilter implements FilterInterface
+class UnImplementFilter
 {
     /**
      *
@@ -17,8 +16,6 @@ class GlobalFilter implements FilterInterface
      */
     public function before(Request $request, $arguments = null)
     {
-        //
-        var_dump("GlobalFilter");
     }
 
     /**
@@ -31,7 +28,6 @@ class GlobalFilter implements FilterInterface
      */
     public function after(Request $request, Response $response, $arguments = null)
     {
-        //
     }
 
 }

@@ -34,10 +34,11 @@
     "require": {
         "swow/swow": "^1.2",
         "workerman/workerman": "^4.1",
-        "nikic/fast-route": "^1.3"
+        "nikic/fast-route": "^1.3",
+        "guzzlehttp/guzzle": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.2",
-        "friendsofphp/php-cs-fixer": "^3.17"
+        "friendsofphp/php-cs-fixer": "^3.17",
+        "phpunit/phpunit": "10.0.1"
     }
 }

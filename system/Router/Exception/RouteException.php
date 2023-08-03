@@ -16,6 +16,11 @@ class RouteException extends AnserGatewayException
         parent::__construct($message);
     }
 
+    public static function forRouteFileNotExist($routesFile): \Error
+    {
+        return new \Error("路由表檔案 : {$routesFile} 不存在");
+    }
+    
     public static function forRouteNotExist($uri): RouteException
     {
         return new self("請求路由 : {$uri} 不存在，可能尚未定義");

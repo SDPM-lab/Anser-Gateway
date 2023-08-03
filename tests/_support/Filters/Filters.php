@@ -1,11 +1,13 @@
 <?php
 
-namespace Config;
+namespace Test\Support\Filters;
 
 use AnserGateway\Filters\JsonResponseFilter;
-use App\Filters\TestFilter;
-use App\Filters\TestFilter2;
-use App\Filters\GlobalFilter;
+use Test\Support\Filters\Filters\TestFilter;
+use Test\Support\Filters\Filters\TestFilter2;
+use Test\Support\Filters\Filters\GlobalFilter;
+use Test\Support\Filters\Filters\UnImplementFilter;
+use Test\Support\Filters\Filters\LetResponse;
 
 class Filters
 {
@@ -17,7 +19,9 @@ class Filters
         'jsonResponse' => JsonResponseFilter::class,
         'test' => TestFilter::class,
         'test2' => TestFilter2::class,
-        'global' => GlobalFilter::class
+        'global' => GlobalFilter::class,
+        'unImplementFilter' => UnImplementFilter::class,
+        'letResponse' => LetResponse::class,
     ];
 
     /**
@@ -26,8 +30,8 @@ class Filters
      */
     public array $globals = [
         'before' => [
-            // 'global'
-            'global' => ['except' => 'api/*'],
+            'global',
+            'test' => ['except' => 'unExcept/*'],
         ],
         'after' => [
             'jsonResponse'

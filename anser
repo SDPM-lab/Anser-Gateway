@@ -39,15 +39,47 @@ if(realpath($path->systemDirectory) === false ) {
     exit("Anser-Gateway system directory not found, please check your config/Path.php");
 }
 
+if(realpath($path->testDirectory) === false ) {
+    exit("Anser-Gateway test directory not found, please check your config/Path.php");
+}
+
 define('PROJECT_APP', realpath($path->appDirectory) . DIRECTORY_SEPARATOR );
 define('PROJECT_SYSTEM', realpath($path->systemDirectory) . DIRECTORY_SEPARATOR);
+define('PROJECT_TEST', realpath($path->testDirectory) . DIRECTORY_SEPARATOR);
 
 require PROJECT_CONFIG . 'Autoloader.php';
 require PROJECT_SYSTEM . 'Autoloader.php';
 $autoLoader = new \AnserGateway\Autoloader((new \Config\Autoloader()));
 $autoLoader->systemRegister();
 
+
 $command = $argv[1] ?? '';
 if ($command == 'serve') {
     \AnserGateway\Bootstrap::serverRun();
+}
+
+// if ($_ENV['TEST'] == 'phpunit') {
+//     \AnserGateway\Bootstrap::testRun();
+// }
+
+if ($command == 'test') {
+
+    $my_argv    = array_slice($argv,2);
+    $my_argv[0] = realpath($my_argv[0]);
+
+    if($my_argv[0] === false){
+        exit("The testing path is not exist, please check your test file {$my_argv[0]}" . PHP_EOL);
+    }
+
+    $testCommand = implode(" ",$my_argv);
+    
+    \AnserGateway\Bootstrap::testRun();
+
+    $phpunitAddress = PROJECT_ROOT . 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'phpunit'; 
+
+    $realCommand = $phpunitAddress . ' ' . $testCommand;
+    
+    $result = popen($realCommand ,'w');
+
+    pclose($result);
 }

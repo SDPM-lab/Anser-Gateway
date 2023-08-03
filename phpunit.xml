@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+         bootstrap="./anser"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         >
+    <testsuites>
+        <testsuite name="AnserGatewayTest">
+            <directory  phpVersion="8.1" phpVersionOperator="&gt;=" >./tests/system</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="TEST" value="phpunit"/>
+    </php>
+    <coverage cacheDirectory="build/.phpunit.cache/code-coverage">
+        <include>
+            <directory suffix=".php">system</directory>
+        </include>
+        <exclude>
+            <directory>system/Worker</directory>
+            <file>system/Bootstrap.php</file>
+            <file>system/Autoloader.php</file>
+            <file>system/Controller.php</file>
+            <file>system/WorkerContainer.php</file>
+            <file>system/Router/RouteCollection.php</file>
+            <file>system/Router/RouteCollectionInterface.php</file>
+            <file>system/Router/RouterInterface.php</file>
+            <file>system/Filters/JsonResponseFilter.php</file>
+            <file>system/Filters/FilterInterface.php</file>
+        </exclude>
+        <report>
+            <clover outputFile="build/logs/clover.xml"/>
+        </report>
+    </coverage>
+</phpunit>

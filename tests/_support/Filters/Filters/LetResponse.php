@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filters;
+namespace Test\Support\Filters\Filters;
 
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use AnserGateway\Filters\FilterInterface;
 
-class GlobalFilter implements FilterInterface
+class LetResponse implements FilterInterface
 {
     /**
      *
@@ -17,8 +17,21 @@ class GlobalFilter implements FilterInterface
      */
     public function before(Request $request, $arguments = null)
     {
-        //
-        var_dump("GlobalFilter");
+
+        $response = new Response(
+            200,
+            [
+                'Content-Type' => 'application/json charset=utf-8',
+            ],
+            json_encode([
+                'code' => 200,
+                'msg'  => "success",
+
+            ])
+        );
+
+        return $response;
+
     }
 
     /**
@@ -31,7 +44,6 @@ class GlobalFilter implements FilterInterface
      */
     public function after(Request $request, Response $response, $arguments = null)
     {
-        //
     }
 
 }
