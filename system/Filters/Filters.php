@@ -93,15 +93,15 @@ class Filters
 
         foreach ($this->filtersClass[$position] as $className) {
             $class = new $className();
-
+            
             if (! $class instanceof FilterInterface) {
                 throw FilterException::forIncorrectInterface(get_class($class));
             }
 
             if ($position === 'before') {
-
+                
                 $result = $class->before($this->request, $this->argumentsClass[$className] ?? null);
-
+                
                 if ($result instanceof Request) {
                     $this->request = $result;
 
@@ -273,7 +273,6 @@ class Filters
      */
     public function enableFilters(array $names, string $when = 'before')
     {
-        // var_dump($names);
         foreach ($names as $filter) {
             $this->enableFilter($filter, $when);
         }
@@ -373,7 +372,7 @@ class Filters
         if (is_string($paths)) {
             $paths = [$paths];
         }
-
+        
         // treat each paths as pseudo-regex
         foreach ($paths as $path) {
             // need to escape path separators

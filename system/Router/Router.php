@@ -101,7 +101,7 @@ class Router implements RouterInterface
      * @param callable $routeList
      * @return Dispatcher
      */
-    private function dispatcher($routeList)
+    public function dispatcher($routeList)
     {
         return simpleDispatcher($routeList, [
             'routeCollector' => RouteCollector::class,
@@ -120,7 +120,7 @@ class Router implements RouterInterface
         if (empty($routeInfo[1])) {
             return false;
         }
-
+        
         $handler = $routeInfo[1]['handler'];  // controller or closure
         $options = $routeInfo[1]['options'];  // route 本身的附加選項
         $group   = $routeInfo[1]['group'];    // route 依附的group附加選項
@@ -142,7 +142,7 @@ class Router implements RouterInterface
         $method     = $handler[1];
 
         if (strpos($controller, '/') !== false) {
-            throw RouteException::forInvalidControllerName($handler);
+            throw RouteException::forInvalidControllerName($controller);
         }
 
         if ($this->scanHandler($controller)) {
@@ -173,14 +173,30 @@ class Router implements RouterInterface
      */
     protected function scanHandler($controller): bool
     {
-        $controllerName        = explode('App\\Controllers\\', $controller)[1];
-        $replaceControllerName = str_replace('\\', DIRECTORY_SEPARATOR, $controllerName);
 
-        if (! is_file(PROJECT_APP . 'HTTP' . DIRECTORY_SEPARATOR . 'Controllers'  . DIRECTORY_SEPARATOR . $replaceControllerName.'.php')) {
-            throw RouteException::forControllerFileNotExist($controller);
+        $controllerPath = explode('\\', $controller);
+
+        if ($controllerPath[0] === "Test") {
+            $controllerName        = explode('Test\\Support\\Controllers\\', $controller)[1];
+            $replaceControllerName = str_replace('\\', DIRECTORY_SEPARATOR, $controllerName);
+
+            if (! is_file(PROJECT_TEST . '_support' . DIRECTORY_SEPARATOR . 'Controllers'  . DIRECTORY_SEPARATOR . $replaceControllerName.'.php')) {
+                throw RouteException::forControllerFileNotExist($controller);
+            }
+            return true;
         }
 
-        return true;
+        if ($controllerPath[0] === "App") {
+            $controllerName        = explode('App\\Controllers\\', $controller)[1];
+            $replaceControllerName = str_replace('\\', DIRECTORY_SEPARATOR, $controllerName);
+
+            if (! is_file(PROJECT_APP . 'HTTP' . DIRECTORY_SEPARATOR . 'Controllers'  . DIRECTORY_SEPARATOR . $replaceControllerName.'.php')) {
+                throw RouteException::forControllerFileNotExist($controller);
+            }
+            return true;
+        }
+           
+        return false;
     }
 
     /**

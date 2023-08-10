@@ -1,7 +1,7 @@
 <?php
 
 namespace AnserGateway\Router;
-
+use AnserGateway\Router\Exception\RouteException;
 class RouteCollector extends RouteCollection
 {
     /**
@@ -9,7 +9,7 @@ class RouteCollector extends RouteCollection
      *
      * @var callable
      */
-    protected static $routeList;
+    protected static $routeList = null;
 
     /**
      * A little performance booster.
@@ -30,13 +30,34 @@ class RouteCollector extends RouteCollection
             return self::$routeList;
         }
 
-        try {
-            self::$routeList   = require_once $routesFile;
-            self::$didDiscover = true;
-        } catch(\Exception $th) {
-            throw $th;
-        }
+        self::$routeList   = require $routesFile;
+        self::$didDiscover = true;
 
         return self::$routeList;
+    }
+
+    /**
+     * 取得routeList
+     *
+     * @return callable|null
+     */
+    public static function getRouteList()
+    {
+        return self::$routeList;
+    }
+
+    /**
+     * 取得didDiscover
+     *
+     * @return bool
+     */
+    public static function getDidDiscover()
+    {
+        return self::$didDiscover;
+    }
+
+    public static function resetDiscover()
+    {
+        self::$didDiscover = false;
     }
 }

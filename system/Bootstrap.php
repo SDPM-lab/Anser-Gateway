@@ -13,4 +13,11 @@ class Bootstrap
         WorkerContainer::registerWorkers($gatewayConfig->serverWorkers);
         WorkerContainer::run();
     }
+
+    public static function testRun()
+    {
+        $gatewayConfig = new Gateway();
+        WorkerContainer::registerWorkers($gatewayConfig->serverWorkers);
+        // WorkerContainer::run();
+    }
 }

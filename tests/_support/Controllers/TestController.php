@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace Test\Support\Controllers;
 
 use App\Controllers\BaseController;
 use Workerman\Protocols\Http\Response;
@@ -65,6 +65,11 @@ class TestController extends BaseController
         ]);
 
         return $this->response->withStatus(200)->withBody($res);
+    }
+
+    public function unWork()
+    {
+
     }
 
 }

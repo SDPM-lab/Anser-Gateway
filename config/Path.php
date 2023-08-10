@@ -16,4 +16,9 @@ class Path
      */
     public string $appDirectory = PROJECT_ROOT . 'app';
 
+    /**
+     * AnserGateway Test directory
+     */
+    public string $testDirectory = PROJECT_ROOT . 'tests';
+
 }
