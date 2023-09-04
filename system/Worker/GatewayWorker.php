@@ -14,6 +14,8 @@ use Swow\Coroutine;
 use AnserGateway\Router\RouteCollector;
 use AnserGateway\Router\Router;
 use AnserGateway\AnserGateway;
+use AnserGateway\HTTPConnectionManager;
+use SDPMlab\Anser\Service\ServiceList;
 
 class GatewayWorker extends WorkerRegistrar
 {
@@ -53,8 +55,43 @@ class GatewayWorker extends WorkerRegistrar
         $webWorker->onWorkerStart = static function (Worker $worker) use ($config) {
             Autoloader::$instance->appRegister();
             Autoloader::$instance->composerRegister();
-            //此處開始框架其他部件初始化
 
+            // HTTPConnectionManager
+            $swowMiddleware = static function (\GuzzleHttp\Psr7\Request $request, array $options) {
+
+                if ($request->getUri()->getPort() === null) {
+                    $prot = $request->getUri()->getScheme() == 'http' ? 80 : 443;
+                }
+                try {
+                    $swowResponse = HTTPConnectionManager::useConnection(
+                        $request->getUri()->getHost(),
+                        $prot ?? $request->getUri()->getPort(),
+                        static function (\Swow\Psr7\Client\Client $client) use ($request, $options): \Psr\Http\Message\ResponseInterface {
+                            // $client->setTcpKeepAlive(true,1);
+                            // $client->setHandshakeTimeout(60);
+                            $swowResponse = $client->setTimeout((int)$options['timeout'] * 1000)->sendRequest($request);
+                            return $swowResponse;
+                        }
+                    );
+                } catch (\Exception $exception) {
+                    log_message('warning',$exception->getMessage());
+                    throw $exception;
+                }
+
+                $response = new \GuzzleHttp\Psr7\Response(
+                    $swowResponse->getStatusCode(),
+                    $swowResponse->getHeaders(),
+                    $swowResponse->getBody()->getContents(),
+                    $swowResponse->getProtocolVersion(),
+                    $swowResponse->getReasonPhrase()
+                );
+
+                return \GuzzleHttp\Promise\Create::promiseFor($response);
+            };
+
+            ServiceList::setGlobalHandlerStack($swowMiddleware);
+            HTTPConnectionManager::$hostMaxConnectionNum = 100;
+            HTTPConnectionManager::$waitConnectionTimeout = 200;
         };
 
         // Worker
@@ -92,8 +129,6 @@ class GatewayWorker extends WorkerRegistrar
                 // );
                 $connection->send($workermanResponse);
             });
-
-
         };
 
         return $webWorker;
@@ -114,5 +149,4 @@ class GatewayWorker extends WorkerRegistrar
         TcpConnection::$defaultMaxPackageSize    = $this->gatewayConfig->defaultMaxPackageSize;
         TcpConnection::$defaultMaxSendBufferSize = $this->gatewayConfig->defaultMaxSendBufferSize;
     }
-
 }
