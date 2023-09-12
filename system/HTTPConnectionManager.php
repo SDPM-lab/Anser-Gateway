@@ -7,23 +7,22 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * HTTP 連線管理器
- * 
+ *
  * @version 1.0.0
  * @author MonkenWu <monkenwu@monken.tw>
  */
 class HTTPConnectionManager
 {
-
     /**
      * 目前沒有進行傳輸的連線
-     * 
+     *
      * @var array<string,array<Client>>
      */
     private static $idleConnections = [];
 
     /**
      * 所有的連線
-     * 
+     *
      * @var array<string,array<Client>>
      */
     private static $connections = [];
@@ -73,11 +72,11 @@ class HTTPConnectionManager
     {
         $hostName = sprintf("%s:%s", $host, $port);
 
-        if(isset(self::$connections[$hostName]) == false){
+        if(isset(self::$connections[$hostName]) == false) {
             self::$connections[$hostName] = [];
         }
 
-        if(isset(self::$idleConnections[$hostName]) == false){
+        if(isset(self::$idleConnections[$hostName]) == false) {
             self::$idleConnections[$hostName] = [];
         }
 
@@ -102,12 +101,12 @@ class HTTPConnectionManager
     {
         $hostName = sprintf("%s:%s", $host, $port);
 
-        if(count(self::$connections[$hostName]) >= self::$hostMaxConnectionNum){
+        if(count(self::$connections[$hostName]) >= self::$hostMaxConnectionNum) {
             $uniqueId = sha1(
-                uniqid() . 
-                substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(10/strlen($x)) )),1,10)
+                uniqid() .
+                substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(10/strlen($x)))), 1, 10)
             );
-            if(isset(self::$getConnectionQueue[$hostName]) == false){
+            if(isset(self::$getConnectionQueue[$hostName]) == false) {
                 self::$getConnectionQueue[$hostName] = [];
             }
             self::$getConnectionQueue[$hostName][] = $uniqueId;
@@ -132,9 +131,9 @@ class HTTPConnectionManager
      */
     protected static function checkQueue(string $hostName, string $uniqueId): bool
     {
-        if(self::$getConnectionQueue[$hostName][0] == $uniqueId){
+        if(self::$getConnectionQueue[$hostName][0] == $uniqueId) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -150,7 +149,8 @@ class HTTPConnectionManager
         array_shift(self::$getConnectionQueue[$hostName]);
     }
 
-    public static function getConnectionInfo(){
+    public static function getConnectionInfo()
+    {
         $info = [];
         foreach (self::$connections as $hostName => $connections) {
             $info[$hostName] = [
@@ -174,6 +174,46 @@ class HTTPConnectionManager
                 }
             }
         }
+    }
+
+    /**
+     * 使用Connection pool 進行請求管理
+     *
+     * @return callable
+     */
+    public static function swowMiddleware()
+    {
+        return static function (\GuzzleHttp\Psr7\Request $request, array $options) {
+
+            if ($request->getUri()->getPort() === null) {
+                $prot = $request->getUri()->getScheme() == 'http' ? 80 : 443;
+            }
+            try {
+                $swowResponse = HTTPConnectionManager::useConnection(
+                    $request->getUri()->getHost(),
+                    $prot ?? $request->getUri()->getPort(),
+                    static function (\Swow\Psr7\Client\Client $client) use ($request, $options): \Psr\Http\Message\ResponseInterface {
+                        // $client->setTcpKeepAlive(true,1);
+                        // $client->setHandshakeTimeout(60);
+                        $swowResponse = $client->setTimeout((int)$options['timeout'] * 1000)->sendRequest($request);
+                        return $swowResponse;
+                    }
+                );
+            } catch (\Exception $exception) {
+                error_log($exception . PHP_EOL, 3, "./error.log");
+                throw $exception;
+            }
+
+            $response = new \GuzzleHttp\Psr7\Response(
+                $swowResponse->getStatusCode(),
+                $swowResponse->getHeaders(),
+                $swowResponse->getBody()->getContents(),
+                $swowResponse->getProtocolVersion(),
+                $swowResponse->getReasonPhrase()
+            );
+
+            return \GuzzleHttp\Promise\Create::promiseFor($response);
+        };
     }
 
 }

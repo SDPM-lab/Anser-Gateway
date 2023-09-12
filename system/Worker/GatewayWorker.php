@@ -21,6 +21,10 @@ class GatewayWorker extends WorkerRegistrar
 {
     protected Gateway $gatewayConfig;
 
+    public static $routeList;
+
+    public static $router;
+
     public function __construct()
     {
         $this->gatewayConfig = new Gateway();
@@ -55,43 +59,16 @@ class GatewayWorker extends WorkerRegistrar
         $webWorker->onWorkerStart = static function (Worker $worker) use ($config) {
             Autoloader::$instance->appRegister();
             Autoloader::$instance->composerRegister();
+            require_once PROJECT_CONFIG . 'Service.php';
+            //此處開始框架其他部件初始化
+            \AnserGateway\Worker\GatewayWorker::$routeList = RouteCollector::loadRoutes();
+            \AnserGateway\Worker\GatewayWorker::$router  = new Router(\AnserGateway\Worker\GatewayWorker::$routeList);
 
-            // HTTPConnectionManager
-            $swowMiddleware = static function (\GuzzleHttp\Psr7\Request $request, array $options) {
-
-                if ($request->getUri()->getPort() === null) {
-                    $prot = $request->getUri()->getScheme() == 'http' ? 80 : 443;
-                }
-                try {
-                    $swowResponse = HTTPConnectionManager::useConnection(
-                        $request->getUri()->getHost(),
-                        $prot ?? $request->getUri()->getPort(),
-                        static function (\Swow\Psr7\Client\Client $client) use ($request, $options): \Psr\Http\Message\ResponseInterface {
-                            // $client->setTcpKeepAlive(true,1);
-                            // $client->setHandshakeTimeout(60);
-                            $swowResponse = $client->setTimeout((int)$options['timeout'] * 1000)->sendRequest($request);
-                            return $swowResponse;
-                        }
-                    );
-                } catch (\Exception $exception) {
-                    log_message('warning',$exception->getMessage());
-                    throw $exception;
-                }
-
-                $response = new \GuzzleHttp\Psr7\Response(
-                    $swowResponse->getStatusCode(),
-                    $swowResponse->getHeaders(),
-                    $swowResponse->getBody()->getContents(),
-                    $swowResponse->getProtocolVersion(),
-                    $swowResponse->getReasonPhrase()
-                );
-
-                return \GuzzleHttp\Promise\Create::promiseFor($response);
-            };
-
-            ServiceList::setGlobalHandlerStack($swowMiddleware);
-            HTTPConnectionManager::$hostMaxConnectionNum = 100;
+            ServiceList::setGlobalHandlerStack(HTTPConnectionManager::swowMiddleware());
+            HTTPConnectionManager::$hostMaxConnectionNum = 150;
             HTTPConnectionManager::$waitConnectionTimeout = 200;
+
+            // Timer包co ，實作服務發現邏輯...
         };
 
         // Worker
@@ -99,11 +76,8 @@ class GatewayWorker extends WorkerRegistrar
             Coroutine::run(static function () use ($connection, $request, $config): void {
                 $config->runtimeTcpConnection($connection, $request);
 
-                # Do get routeCollector and new a Router class
-                $routeList = RouteCollector::loadRoutes();
-                $router    = new Router($routeList);
                 # Injection Router class to AnserGateway
-                $gateway   = new AnserGateway($router);
+                $gateway = new AnserGateway(\AnserGateway\Worker\GatewayWorker::$router);
 
                 try {
                     $workermanResponse = $gateway->handleRequest($request);
@@ -128,6 +102,7 @@ class GatewayWorker extends WorkerRegistrar
                 //     ''
                 // );
                 $connection->send($workermanResponse);
+                unset($gateway);
             });
         };
 
