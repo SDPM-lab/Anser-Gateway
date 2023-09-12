@@ -181,7 +181,7 @@ class HTTPConnectionManager
      *
      * @return callable
      */
-    public static function swowMiddleware()
+    public static function connectionMiddleware()
     {
         return static function (\GuzzleHttp\Psr7\Request $request, array $options) {
 

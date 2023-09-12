@@ -64,7 +64,7 @@ class GatewayWorker extends WorkerRegistrar
             \AnserGateway\Worker\GatewayWorker::$routeList = RouteCollector::loadRoutes();
             \AnserGateway\Worker\GatewayWorker::$router  = new Router(\AnserGateway\Worker\GatewayWorker::$routeList);
 
-            ServiceList::setGlobalHandlerStack(HTTPConnectionManager::swowMiddleware());
+            ServiceList::setGlobalHandlerStack(HTTPConnectionManager::connectionMiddleware());
             HTTPConnectionManager::$hostMaxConnectionNum = 150;
             HTTPConnectionManager::$waitConnectionTimeout = 200;
 
