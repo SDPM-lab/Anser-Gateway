@@ -7,13 +7,6 @@ use AnserGateway\Config\BaseConfig;
 class ServiceDiscovery extends BaseConfig
 {
     /**
-     * 已完成實例化的Consul設定
-     *
-     * @var \DCarbone\PHPConsulAPI\Config
-     */
-    protected $consulConfig;
-
-    /**
      * 需要被探索的服務名稱
      *
      * @var array<string>
