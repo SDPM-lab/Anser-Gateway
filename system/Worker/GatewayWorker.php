@@ -2,20 +2,22 @@
 
 namespace AnserGateway\Worker;
 
-use AnserGateway\Autoloader;
-use AnserGateway\Worker\WorkerRegistrar;
 use Config\Gateway;
-use Workerman\Connection\TcpConnection;
+use Swow\Coroutine;
+use Workerman\Timer;
+use Workerman\Worker;
+use AnserGateway\Autoloader;
+use AnserGateway\Worker\Swow;
+use AnserGateway\AnserGateway;
+use AnserGateway\Router\Router;
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
-use Workerman\Worker;
-use AnserGateway\Worker\Swow;
-use Swow\Coroutine;
-use AnserGateway\Router\RouteCollector;
-use AnserGateway\Router\Router;
-use AnserGateway\AnserGateway;
-use AnserGateway\HTTPConnectionManager;
 use SDPMlab\Anser\Service\ServiceList;
+use AnserGateway\Router\RouteCollector;
+use Workerman\Connection\TcpConnection;
+use AnserGateway\HTTPConnectionManager;
+use AnserGateway\Worker\WorkerRegistrar;
+use AnserGateway\ServiceDiscovery\ServiceDiscovery;
 
 class GatewayWorker extends WorkerRegistrar
 {
@@ -24,6 +26,8 @@ class GatewayWorker extends WorkerRegistrar
     public static $routeList;
 
     public static $router;
+
+    public static $serviceDiscovery;
 
     public function __construct()
     {
@@ -61,14 +65,26 @@ class GatewayWorker extends WorkerRegistrar
             Autoloader::$instance->composerRegister();
             require_once PROJECT_CONFIG . 'Service.php';
             //此處開始框架其他部件初始化
-            \AnserGateway\Worker\GatewayWorker::$routeList = RouteCollector::loadRoutes();
-            \AnserGateway\Worker\GatewayWorker::$router  = new Router(\AnserGateway\Worker\GatewayWorker::$routeList);
+            \AnserGateway\Worker\GatewayWorker::$serviceDiscovery = new ServiceDiscovery();
+            \AnserGateway\Worker\GatewayWorker::$routeList        = RouteCollector::loadRoutes();
+            \AnserGateway\Worker\GatewayWorker::$router           = new Router(\AnserGateway\Worker\GatewayWorker::$routeList);
+
 
             ServiceList::setGlobalHandlerStack(HTTPConnectionManager::connectionMiddleware());
             HTTPConnectionManager::$hostMaxConnectionNum = 150;
             HTTPConnectionManager::$waitConnectionTimeout = 200;
 
             // Timer包co ，實作服務發現邏輯...
+            // first discovery
+            \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
+            Timer::add(
+                \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->reloadTime,
+                static function () {
+                    Coroutine::run(static function (): void {
+                        \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
+                    });
+                }
+            );
         };
 
         // Worker
