@@ -7,7 +7,7 @@ use Workerman\Worker;
 use Workerman\Protocols\Http\Request;
 use AnserGateway\Config\BaseConfig;
 
-class Gateway
+class Gateway extends BaseConfig
 {
     /**
      * Auto Reload Mode
