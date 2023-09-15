@@ -5,8 +5,9 @@ namespace Config;
 use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 use Workerman\Protocols\Http\Request;
+use AnserGateway\Config\BaseConfig;
 
-class Gateway
+class Gateway extends BaseConfig
 {
     /**
      * Auto Reload Mode
@@ -127,6 +128,11 @@ class Gateway
         \AnserGateway\Worker\GatewayWorker::class,
         // \AnserGateway\Worker\AutoloadFileMonitor::class,
     ];
+
+    // public function __construct()
+    // {
+    //     parent::__construct();
+    // }
 
     /**
      * You can declare some additional worker setting in this method.

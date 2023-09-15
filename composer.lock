@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "30a5eb4c051626b28e5561c49430aa98",
+    "content-hash": "6b624795cc78ae81fa66806e56414f7c",
     "packages": [
         {
             "name": "composer/semver",
@@ -1004,6 +1004,57 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "sdpmlab/anser-action",
+            "version": "v0.3.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SDPM-lab/Anser-Action.git",
+                "reference": "5d117f6d93e29bcf97180ce2b3004c5e49ae5851"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SDPM-lab/Anser-Action/zipball/5d117f6d93e29bcf97180ce2b3004c5e49ae5851",
+                "reference": "5d117f6d93e29bcf97180ce2b3004c5e49ae5851",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.0",
+                "php": "^7.4||^8.0",
+                "psr/http-message": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SDPMlab\\Anser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "SDPM-lab",
+                    "homepage": "https://github.com/SDPM-lab"
+                },
+                {
+                    "name": "MonkenWu",
+                    "homepage": "https://github.com/monkenWu"
+                }
+            ],
+            "description": "PHP simple API connection library.",
+            "keywords": [
+                "api",
+                "http client",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/SDPM-lab/Anser-Action/issues",
+                "source": "https://github.com/SDPM-lab/Anser-Action/tree/v0.3.7"
+            },
+            "time": "2023-05-04T12:53:58+00:00"
         },
         {
             "name": "swow/swow",
