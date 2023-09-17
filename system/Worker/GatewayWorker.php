@@ -76,6 +76,8 @@ class GatewayWorker extends WorkerRegistrar
 
             // Timer包co ，實作服務發現邏輯...
             // first discovery
+            ServiceList::setServiceDataHandler(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->serviceDataHandler());
+            // 預先探索服務
             \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
             Timer::add(
                 \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->reloadTime,

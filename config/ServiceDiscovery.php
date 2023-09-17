@@ -41,6 +41,13 @@ class ServiceDiscovery extends BaseConfig
      */
     public int $reloadTime = 10;
 
+    /**
+     * 服務負載均衡演算法
+     *
+     * @var string
+     */
+    public string $LBStrategy = 'random';
+
     public function __construct()
     {
         parent::__construct();

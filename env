@@ -23,3 +23,4 @@
 # servicediscovery.scheme  = 'http'                                 # [optional] defaults to "http"
 # servicediscovery.dataCenter = ''                                  # [optional]
 # servicediscovery.reloadTime = 300                                 # [optional] php json encode opt value to use when serializing requests
+# servicediscovery.LBStrategy = random

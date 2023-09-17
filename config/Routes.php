@@ -12,6 +12,7 @@ return function (RouteCollector $route) {
     },['filter'=>'test2:dual,noreturn']);
     $route->group('/api',['filter'=>'test'], function (RouteCollector $route) {
         $route->get('/test', [\App\Controllers\V1\TestController::class, 'index'],['filter'=>'test2']);
+        $route->get('/order', [\App\Controllers\V1\TestController::class, 'order'],['filter'=>'test2']);
         $route->get('/asd/{name}', function($params,$request,$response){
             var_dump($request->method());
         },['filter'=>'test2']);
