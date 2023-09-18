@@ -53,7 +53,7 @@ class ServiceDiscovery
      *
      * @var object
      */
-    public $LBinstance;
+    public $LBStrategy;
 
 
     /**
@@ -82,7 +82,8 @@ class ServiceDiscovery
             strtolower($this->serviceDiscoveryConfig->scheme),
             $this->serviceDiscoveryConfig->address,
         );
-        LoadBalance::setStrategy($this->serviceDiscoveryConfig->LBStrategy);
+        $this->LBStrategy             = $this->serviceDiscoveryConfig->LBStrategy;
+        LoadBalance::setStrategy($this->LBStrategy);
     }
 
 
@@ -90,9 +91,9 @@ class ServiceDiscovery
      * 執行服務探索步驟
      * 於ServiceDiscoverWorker被呼叫
      *
-     * @return void
+     * @return void|null
      */
-    public function doServiceDiscovery(): void
+    public function doServiceDiscovery()
     {
         if(!$this->isNeedToUpdateServiceList()) {
             return;
@@ -160,14 +161,15 @@ class ServiceDiscovery
     {
         $this->cleanLocalServices();
         $servicesData = $this->doFoundServices();
+        
         foreach ($servicesData as $serviceName => $serviceData) {
+            if (is_null($servicesData[$serviceName]) || count($serviceData) == 0) {
+                throw ServiceDiscoveryException::forServiceNotFound($serviceName);
+            }
+
             if(count($servicesData[$serviceName]) > 1) {
                 $this->setServices($serviceData);
             } else {
-                if(count($serviceData) == 0) {
-                    log_message('warning', "未發現服務-{$serviceName} 於Consul進行服務探索時失效，請檢察是否於Consul註冊該服務或於Anser-Gateway設定檔(env)檢查是否設定正確。");
-                    throw ServiceDiscoveryException::forServiceNotFound($serviceName);
-                }
                 $this->setService($serviceData);
             }
         }

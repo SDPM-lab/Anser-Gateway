@@ -20,4 +20,9 @@ class ServiceDiscoveryException extends AnserGatewayException
     {
         return new self("服務 - {$serviceName} 並未被搜尋成功，請確認是否已成功註冊。");
     }
+
+    public static function forConsulServiceNotFound($statusCode): ServiceDiscoveryException
+    {
+        return new self("HTTP連線錯誤[{$statusCode}]，請確認服務探索中心 - Consul 是否運行正常");
+    }
 }
