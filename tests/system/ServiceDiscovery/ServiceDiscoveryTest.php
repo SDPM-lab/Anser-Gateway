@@ -245,7 +245,7 @@ class ServiceDiscoveryTest extends TestCase
      */
     public function testSetLocalServices()
     {
-        
+
         $closure = function () {
             // fwrite(STDERR, print_r($this->serviceDiscoveryInstance, TRUE));
             $this->defaultServiceGroup = ['Order-Service1','Product-Service1'];
@@ -281,7 +281,7 @@ class ServiceDiscoveryTest extends TestCase
      */
     public function testIsNeedToUpdateServiceListAssertTrue()
     {
-        $closure = function (){
+        $closure = function () {
             $this->localServices  = [];
             $this->localVerifyServices  = [null];
             $result = $this->isNeedToUpdateServiceList();
@@ -298,7 +298,7 @@ class ServiceDiscoveryTest extends TestCase
      */
     public function testIsNeedToUpdateServiceListAssertFalse()
     {
-        $closure = function (){
+        $closure = function () {
             $this->localServices  = [];
             $this->localVerifyServices  = [];
             $result = $this->isNeedToUpdateServiceList();
@@ -315,7 +315,7 @@ class ServiceDiscoveryTest extends TestCase
      */
     public function testDoServiceDiscovery()
     {
-        $closure = function (){
+        $closure = function () {
             $this->localServices  = [];
             $this->localVerifyServices  = [null];
             $this->doServiceDiscovery();
@@ -333,7 +333,7 @@ class ServiceDiscoveryTest extends TestCase
     public function testServiceDataHandlerAssertCallable()
     {
         $result = $this->serviceDiscoveryInstance->serviceDataHandler();
-        assertInstanceOf('Closure',$result);
+        assertInstanceOf('Closure', $result);
     }
 
     /**
@@ -343,10 +343,10 @@ class ServiceDiscoveryTest extends TestCase
      */
     public function testServiceDataHandlerHttpAddress()
     {
-        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(),'https://www.google.com:80/');
-        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings',$result);
-        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(),'http://www.google.com/');
-        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings',$result);
+        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(), 'https://www.google.com:80/');
+        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings', $result);
+        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(), 'http://www.google.com/');
+        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings', $result);
     }
 
     /**
@@ -356,7 +356,7 @@ class ServiceDiscoveryTest extends TestCase
      */
     public function testServiceDataHandlerAssertNull()
     {
-        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(),'Order_Service');
+        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(), 'Order_Service');
         assertNull($result);
     }
 
@@ -376,12 +376,12 @@ class ServiceDiscoveryTest extends TestCase
                 'scheme' => false
             ]
         ];
-        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(),'Order_Service1');
-        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings',$result);
-        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['name'],$result->name);
-        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['address'],$result->address);
-        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['port'],$result->port);
-        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['scheme'],$result->scheme);
+        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(), 'Order_Service1');
+        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings', $result);
+        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['name'], $result->name);
+        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['address'], $result->address);
+        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['port'], $result->port);
+        assertEquals(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'][0]['scheme'], $result->scheme);
     }
 
     /**
@@ -406,8 +406,8 @@ class ServiceDiscoveryTest extends TestCase
                 'scheme' => false
             ],
         ];
-        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(),'Order_Service1');
-        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings',$result);
+        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(), 'Order_Service1');
+        assertInstanceOf('\SDPMlab\Anser\Service\ServiceSettings', $result);
     }
 
     /**
@@ -421,6 +421,22 @@ class ServiceDiscoveryTest extends TestCase
         \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices['Order_Service1'] = [];
         $this->expectException(\AnserGateway\ServiceDiscovery\Exception\ServiceDiscoveryException::class);
         $this->expectExceptionMessage("服務 - Order_Service1 並未被搜尋成功，請確認是否已成功註冊。");
-        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(),'Order_Service1');
+        $result = call_user_func($this->serviceDiscoveryInstance->serviceDataHandler(), 'Order_Service1');
+    }
+
+    /**
+     * registerSelf test
+     *
+     * @return void
+     */
+    public function testRegisterSelf()
+    {
+        $closure = function () {
+            $this->consulAddress = 'http://host.docker.internal:8500';
+            $res = $this->registerSelf('http', 8080);
+            assertTrue($res);
+        };
+        $binding = $closure->bindTo($this->serviceDiscoveryInstance, get_class($this->serviceDiscoveryInstance));
+        $binding();
     }
 }

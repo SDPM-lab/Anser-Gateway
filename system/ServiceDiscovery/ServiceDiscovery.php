@@ -3,6 +3,7 @@
 namespace AnserGateway\ServiceDiscovery;
 
 use Config\ServiceDiscovery as ServiceDiscoveryConfig;
+use Config\GatewayRegister;
 use SDPMlab\Anser\Service\Action;
 use Psr\Http\Message\ResponseInterface;
 use SDPMlab\Anser\Service\ConcurrentAction;
@@ -19,6 +20,13 @@ class ServiceDiscovery
      * @var \Config\ServiceDiscovery
      */
     protected $serviceDiscoveryConfig;
+
+    /**
+     * GatewayRegister 設定檔實體
+     *
+     * @var GatewayRegister
+     */
+    protected $gatewayRegister;
 
     /**
      * 須被訪問的服務
@@ -74,6 +82,7 @@ class ServiceDiscovery
     public function __construct()
     {
         $this->serviceDiscoveryConfig = new ServiceDiscoveryConfig();
+        $this->gatewayRegister        = new GatewayRegister();
         $this->defaultServiceGroup    = $this->serviceDiscoveryConfig->defaultServiceGroup;
         $this->reloadTime             = $this->serviceDiscoveryConfig->reloadTime;
         $this->consulDataCenter       = $this->serviceDiscoveryConfig->dataCenter;
@@ -86,6 +95,89 @@ class ServiceDiscovery
         LoadBalance::setStrategy($this->LBStrategy);
     }
 
+    /**
+     * 註冊AnserGateway 至 Consul Server
+     *
+     * @param string $httpScheme
+     * @param integer $port
+     * @return bool
+     */
+    public function registerSelf(string $httpScheme, int $port): bool
+    {
+
+        $gatewayAddress =  sprintf(
+            '%s://%s:%s',
+            $httpScheme,
+            $this->gatewayRegister->address,
+            $port
+        );
+
+        $checkRoute = sprintf(
+            '%s/%s',
+            $gatewayAddress,
+            $this->gatewayRegister->healthRoute
+        );
+
+        array_push($this->gatewayRegister->tags, "http_scheme={$httpScheme}");
+
+        $action = (new Action(
+            $this->consulAddress,
+            "PUT",
+            "v1/agent/service/register"
+        ))->addOption("json", [
+            "id" => $this->gatewayRegister->id,
+            "name" => $this->gatewayRegister->name,
+            "tags" => $this->gatewayRegister->tags,
+            "address" => $this->gatewayRegister->address,
+            "port" => (int)$port,
+            "check" => [
+                "name" => $this->gatewayRegister->name,
+                "service_id" => $this->gatewayRegister->id,
+                "http" => $checkRoute,
+                "interval" => $this->gatewayRegister->interval,
+                "timeout" => $this->gatewayRegister->timeout
+            ]
+        ])->doneHandler(function (
+            ResponseInterface $response,
+            Action $runtimeAction
+        ) {
+            $body = $response->getBody()->getContents();
+            $data = json_decode($body, true);
+            $runtimeAction->setMeaningData($data);
+        })->failHandler(function (
+            ActionException $e
+        ) {
+            if($e->isClientError()) {
+                $e->getAction()->setMeaningData([
+                    "code" => $e->getStatusCode(),
+                    "msg" => "client error"
+                ]);
+            } elseif ($e->isServerError()) {
+                $e->getAction()->setMeaningData([
+                    "code" => $e->getStatusCode(),
+                    "msg" => "server error"
+                ]);
+            } elseif($e->isConnectError()) {
+                $e->getAction()->setMeaningData([
+                    "msg" => $e->getMessage()
+                ]);
+            }
+        });
+
+        $data = $action->do()->getMeaningData();
+
+        if (isset($data['msg'])) {
+            throw \AnserGateway\ServiceDiscovery\Exception\ServiceDiscoveryException::forAnserGatewayRegisterError($data);
+        }
+
+        /**
+         * Consul 註冊成功回傳為null
+         */
+        if(is_null($data)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * 執行服務探索步驟
@@ -157,11 +249,11 @@ class ServiceDiscovery
      *
      * @return void
      */
-    public function setLocalServices()
+    public function setLocalServices(): void
     {
         $this->cleanLocalServices();
         $servicesData = $this->doFoundServices();
-        
+
         foreach ($servicesData as $serviceName => $serviceData) {
             if (is_null($servicesData[$serviceName]) || count($serviceData) == 0) {
                 throw ServiceDiscoveryException::forServiceNotFound($serviceName);

@@ -68,7 +68,7 @@ class GatewayWorker extends WorkerRegistrar
             \AnserGateway\Worker\GatewayWorker::$serviceDiscovery = new ServiceDiscovery();
             \AnserGateway\Worker\GatewayWorker::$routeList        = RouteCollector::loadRoutes();
             \AnserGateway\Worker\GatewayWorker::$router           = new Router(\AnserGateway\Worker\GatewayWorker::$routeList);
-
+            \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->registerSelf($config->ssl ? 'https' : 'http', $config->listeningPort);
 
             ServiceList::setGlobalHandlerStack(HTTPConnectionManager::connectionMiddleware());
             HTTPConnectionManager::$hostMaxConnectionNum = 150;

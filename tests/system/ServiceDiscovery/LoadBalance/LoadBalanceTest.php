@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use PHPUnit\Framework\TestCase;
 use AnserGateway\ServiceDiscovery\LoadBalance\LoadBalance;
 use AnserGateway\ServiceDiscovery\LoadBalance\Random;
@@ -27,7 +28,7 @@ class LoadBalanceTest extends TestCase
     public function testSetStrategy()
     {
         LoadBalance::setStrategy('random');
-        assertInstanceOf('AnserGateway\ServiceDiscovery\LoadBalance\Random',LoadBalance::$strategy);
+        assertInstanceOf('AnserGateway\ServiceDiscovery\LoadBalance\Random', LoadBalance::$strategy);
     }
 
     public function testSetStrategyThrowException()
@@ -80,7 +81,6 @@ class LoadBalanceTest extends TestCase
         ];
         LoadBalance::setStrategy('random');
         $result = LoadBalance::do($services);
-        assertEquals($services[0],$result);
+        assertEquals($services[0], $result);
     }
 }
-?>

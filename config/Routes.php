@@ -3,7 +3,14 @@ namespace Config;
 use AnserGateway\Router\RouteCollector;
 use Workerman\Protocols\Http\Response;
 return function (RouteCollector $route) {
+    /**
+     * system default route
+     */
+    $route->get('/heartBeat',[\App\Controllers\HeartBeat::class, 'index']);
 
+    /**
+     * custom
+     */
     $route->get('/test',[\App\Controllers\TestController::class, 'index'],['filter'=>'test2:dual,noreturn']);
     $route->post('/test',[\App\Controllers\TestController::class, 'show'],['filter'=>'test2:dual,noreturn']);
 
