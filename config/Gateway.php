@@ -129,6 +129,13 @@ class Gateway extends BaseConfig
         // \AnserGateway\Worker\AutoloadFileMonitor::class,
     ];
 
+    /**
+     * Select whether service discovery is turned on.
+     *
+     * @var boolean
+     */
+    public $enableServiceDiscovery = false;
+
     // public function __construct()
     // {
     //     parent::__construct();

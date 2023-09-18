@@ -18,6 +18,7 @@ class ServiceDiscoveryTest extends TestCase
      * @var ServiceDiscovery
      */
     protected $serviceDiscoveryInstance;
+    
     protected function setUp(): void
     {
         parent::setUp();

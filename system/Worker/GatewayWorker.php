@@ -27,7 +27,7 @@ class GatewayWorker extends WorkerRegistrar
 
     public static $router;
 
-    public static $serviceDiscovery;
+    public static $serviceDiscovery = null;
 
     public function __construct()
     {
@@ -65,28 +65,34 @@ class GatewayWorker extends WorkerRegistrar
             Autoloader::$instance->composerRegister();
             require_once PROJECT_CONFIG . 'Service.php';
             //此處開始框架其他部件初始化
-            \AnserGateway\Worker\GatewayWorker::$serviceDiscovery = new ServiceDiscovery();
+
             \AnserGateway\Worker\GatewayWorker::$routeList        = RouteCollector::loadRoutes();
             \AnserGateway\Worker\GatewayWorker::$router           = new Router(\AnserGateway\Worker\GatewayWorker::$routeList);
-            \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->registerSelf($config->ssl ? 'https' : 'http', $config->listeningPort);
+
+            if ($config->enableServiceDiscovery) {
+                \AnserGateway\Worker\GatewayWorker::$serviceDiscovery = new ServiceDiscovery();
+                \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->registerSelf($config->ssl ? 'https' : 'http', $config->listeningPort);
+            }
 
             ServiceList::setGlobalHandlerStack(HTTPConnectionManager::connectionMiddleware());
             HTTPConnectionManager::$hostMaxConnectionNum = 150;
             HTTPConnectionManager::$waitConnectionTimeout = 200;
 
             // Timer包co ，實作服務發現邏輯...
-            // first discovery
-            ServiceList::setServiceDataHandler(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->serviceDataHandler());
-            // 預先探索服務
-            \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
-            Timer::add(
-                \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->reloadTime,
-                static function () {
-                    Coroutine::run(static function (): void {
-                        \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
-                    });
-                }
-            );
+            if (!is_null(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery)) {
+                // first discovery
+                ServiceList::setServiceDataHandler(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->serviceDataHandler());
+                // 預先探索服務
+                \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
+                Timer::add(
+                    \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->reloadTime,
+                    static function () {
+                        Coroutine::run(static function (): void {
+                            \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
+                        });
+                    }
+                );
+            }
         };
 
         // Worker
@@ -113,12 +119,6 @@ class GatewayWorker extends WorkerRegistrar
                     );
                 }
 
-                //此處將響應轉換成 Workerman 的 Response
-                // $workermanResponse = new Response(
-                //     200,
-                //     [],
-                //     ''
-                // );
                 $connection->send($workermanResponse);
                 unset($gateway);
             });
