@@ -14,6 +14,19 @@
 # gateway.sslAllowSelfSigned = false
 # gateway.defaultMaxSendBufferSize = 1048576
 # gateway.defaultMaxPackageSize = 10485760
+# gateway.enableServiceDiscovery = true
+
+#--------------------------------------------------------------------
+# Gateway Register
+#--------------------------------------------------------------------
+
+# gatewayregister.id = AnserGateway1
+# gatewayregister.name = AnserGateway
+# gatewayregister.tags = 'AnserGateway'
+# gatewayregister.address = 'localhost'   # default value localhost, if use docker can set host.docker.internal
+# gatewayregister.interval = '60s'
+# gatewayregister.timeout = '5s'
+# gatewayregister.healthRoute = ''
 
 #--------------------------------------------------------------------
 # Service Discovery
@@ -23,3 +36,4 @@
 # servicediscovery.scheme  = 'http'                                 # [optional] defaults to "http"
 # servicediscovery.dataCenter = ''                                  # [optional]
 # servicediscovery.reloadTime = 300                                 # [optional] php json encode opt value to use when serializing requests
+# servicediscovery.LBStrategy = random
