@@ -183,36 +183,38 @@ class HTTPConnectionManager
      */
     public static function connectionMiddleware()
     {
-        return static function (\GuzzleHttp\Psr7\Request $request, array $options) {
+        return static function () {
+            return static function (\GuzzleHttp\Psr7\Request $request, array $options) {
+                
+                if ($request->getUri()->getPort() === null) {
+                    $prot = $request->getUri()->getScheme() == 'http' ? 80 : 443;
+                }
+                try {
+                    $swowResponse = HTTPConnectionManager::useConnection(
+                        $request->getUri()->getHost(),
+                        $prot ?? $request->getUri()->getPort(),
+                        static function (\Swow\Psr7\Client\Client $client) use ($request, $options): \Psr\Http\Message\ResponseInterface {
+                            // $client->setTcpKeepAlive(true,1);
+                            // $client->setHandshakeTimeout(60);
+                            $swowResponse = $client->setTimeout((int)$options['timeout'] * 1000)->sendRequest($request);
+                            return $swowResponse;
+                        }
+                    );
+                } catch (\Exception $exception) {
+                    error_log($exception . PHP_EOL, 3, "./error.log");
+                    throw $exception;
+                }
 
-            if ($request->getUri()->getPort() === null) {
-                $prot = $request->getUri()->getScheme() == 'http' ? 80 : 443;
-            }
-            try {
-                $swowResponse = HTTPConnectionManager::useConnection(
-                    $request->getUri()->getHost(),
-                    $prot ?? $request->getUri()->getPort(),
-                    static function (\Swow\Psr7\Client\Client $client) use ($request, $options): \Psr\Http\Message\ResponseInterface {
-                        // $client->setTcpKeepAlive(true,1);
-                        // $client->setHandshakeTimeout(60);
-                        $swowResponse = $client->setTimeout((int)$options['timeout'] * 1000)->sendRequest($request);
-                        return $swowResponse;
-                    }
+                $response = new \GuzzleHttp\Psr7\Response(
+                    $swowResponse->getStatusCode(),
+                    $swowResponse->getHeaders(),
+                    $swowResponse->getBody()->getContents(),
+                    $swowResponse->getProtocolVersion(),
+                    $swowResponse->getReasonPhrase()
                 );
-            } catch (\Exception $exception) {
-                error_log($exception . PHP_EOL, 3, "./error.log");
-                throw $exception;
-            }
 
-            $response = new \GuzzleHttp\Psr7\Response(
-                $swowResponse->getStatusCode(),
-                $swowResponse->getHeaders(),
-                $swowResponse->getBody()->getContents(),
-                $swowResponse->getProtocolVersion(),
-                $swowResponse->getReasonPhrase()
-            );
-
-            return \GuzzleHttp\Promise\Create::promiseFor($response);
+                return \GuzzleHttp\Promise\Create::promiseFor($response);
+            };
         };
     }
 
