@@ -34,7 +34,7 @@ class LoadBalance
     /**
      * 執行負載策略
      *
-     * @return array
+     * @return array|string
      */
     public static function do(array $services)
     {

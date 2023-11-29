@@ -82,6 +82,7 @@ class GatewayWorker extends WorkerRegistrar
             if (!is_null(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery)) {
                 // first discovery
                 ServiceList::setServiceDataHandler(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->serviceDataHandler());
+                \Config\IPTable::setIPTableWithServiceDiscovery(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery->serviceDataHandlerByProxy());
                 // 預先探索服務
                 \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->doServiceDiscovery();
                 Timer::add(

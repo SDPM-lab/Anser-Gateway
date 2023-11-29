@@ -11,6 +11,7 @@ return function (RouteCollector $route) {
     /**
      * custom
      */
+    $route->get('/ProductService',[\App\Controllers\ProxyControllerExample::class, 'index'],['filter'=>'test2:dual,noreturn']);
     $route->get('/test',[\App\Controllers\TestController::class, 'index'],['filter'=>'test2:dual,noreturn']);
     $route->post('/test',[\App\Controllers\TestController::class, 'show'],['filter'=>'test2:dual,noreturn']);
 

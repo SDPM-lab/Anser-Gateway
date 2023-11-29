@@ -420,4 +420,60 @@ class ServiceDiscovery
 
         };
     }
+
+    /**
+     * 真實更新到service list的步驟(用於反向代理)
+     *
+     * @return callable
+     */
+    public function serviceDataHandlerByProxy(): callable
+    {
+        return static function (string $serviceName) {
+            if (filter_var($serviceName, FILTER_VALIDATE_URL) !== false) {
+                $parseUrl = parse_url($serviceName);
+                if(isset($parseUrl["port"])) {
+                    $port = (int)$parseUrl["port"];
+                } else {
+                    $port = $parseUrl["scheme"] === "https" ? 443 : 80;
+                }
+
+                return [
+                    "name"    => $parseUrl["host"],
+                    "address" => $parseUrl["host"],
+                    "port"    => $port,
+                    "scheme"  => $parseUrl["scheme"] === "https"
+                ];
+            }
+
+            $services = \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->localServices[$serviceName];
+
+            if (isset($services)) {
+                if (count($services) > 1) {
+                    $realServiceArray = LoadBalance::do($services);
+                    return [
+                        "name"    => $realServiceArray["name"],
+                        "address" => $realServiceArray["address"],
+                        "port"    => $realServiceArray["port"],
+                        "scheme"  => $realServiceArray["scheme"],
+                    ];
+                } else {
+                    if (count($services) === 0) {
+                        // 服務不存在
+                        log_message('warning', "未發現服務-{$serviceName} 於Consul進行服務探索時失效，請檢察是否於Consul註冊該服務或於Anser-Gateway設定檔(env)檢查是否設定正確。");
+                        throw ServiceDiscoveryException::forServiceNotFound($serviceName);
+                    }
+                    // 做服務設定的步驟
+                    return [
+                        "name"    => $services[0]["name"],
+                        "address" => $services[0]["address"],
+                        "port"    => $services[0]["port"],
+                        "scheme"  => $services[0]["scheme"],
+                    ];
+                }
+            } else {
+                return null;
+            }
+
+        };
+    } 
 }
