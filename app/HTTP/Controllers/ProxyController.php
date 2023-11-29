@@ -65,7 +65,7 @@ abstract class ProxyController extends Controller
         if (is_null($serviceInfo['port'])) {
             $serviceInfo['port'] = $serviceInfo['scheme'] == 'http' ? 80 : 443;
         }
-        var_dump($this->request->uri());
+        
         $preUri = $this->request->uri();
         if (strpos($preUri, "/") === 0) {
             $preUri = substr($preUri, strlen("/"));
@@ -78,7 +78,7 @@ abstract class ProxyController extends Controller
        // Todo : Workerman request Transfer to PSR7
         $psr7ProxyRequest = new \GuzzleHttp\Psr7\ServerRequest(
             $this->request->method(),
-            "/users",
+            $preUri,
             $this->request->header(),
             $this->request->rawBody(),
             $this->request->protocolVersion()
