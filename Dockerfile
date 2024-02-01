@@ -17,7 +17,4 @@ RUN \
     make install && \
     docker-php-ext-enable swow
 
-RUN \
-    apk add htop
-
 WORKDIR "/"
