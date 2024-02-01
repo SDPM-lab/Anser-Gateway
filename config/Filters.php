@@ -15,9 +15,6 @@ class Filters
      */
     public array $aliases = [
         'jsonResponse' => JsonResponseFilter::class,
-        'test' => TestFilter::class,
-        'test2' => TestFilter2::class,
-        'global' => GlobalFilter::class
     ];
 
     /**
@@ -26,8 +23,7 @@ class Filters
      */
     public array $globals = [
         'before' => [
-            // 'global'
-            'global' => ['except' => 'api/*'],
+            // 'global' => ['except' => 'api/*'],
         ],
         'after' => [
             'jsonResponse'
