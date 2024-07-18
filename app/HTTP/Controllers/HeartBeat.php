@@ -16,7 +16,7 @@ class HeartBeat extends BaseController
     {
         $res = json_encode([
             "status" => 200,
-            "msg" => "AnserGateway is lived."
+            "msg" => "AnserGateway is alive."
         ]);
 
         return $this->response->withStatus(200)->withBody($res);

@@ -182,25 +182,30 @@ class HTTPConnectionManager
      * @return callable
      */
     public static function connectionMiddleware()
-    {
+    {   
         return static function (\GuzzleHttp\Psr7\Request $request, array $options) {
             
             if ($request->getUri()->getPort() === null) {
                 $prot = $request->getUri()->getScheme() == 'http' ? 80 : 443;
             }
             try {
+                
                 $swowResponse = HTTPConnectionManager::useConnection(
                     $request->getUri()->getHost(),
                     $prot ?? $request->getUri()->getPort(),
+                    // 443,
                     static function (\Swow\Psr7\Client\Client $client) use ($request, $options): \Psr\Http\Message\ResponseInterface {
-                        // $client->setTcpKeepAlive(true,1);
-                        // $client->setHandshakeTimeout(60);
-                        $swowResponse = $client->setTimeout((int)$options['timeout'] * 1000)->sendRequest($request);
+
+                        $swowResponse = $client->setTimeout(10000)->sendRequest($request);
+   
+                        dump("use HTTP Connection manager!");
                         return $swowResponse;
                     }
                 );
+
             } catch (\Exception $exception) {
                 error_log($exception . PHP_EOL, 3, "./error.log");
+                // dump($exception);
                 throw $exception;
             }
 
@@ -215,5 +220,4 @@ class HTTPConnectionManager
             return \GuzzleHttp\Promise\Create::promiseFor($response);
         };
     }
-
 }

@@ -1,0 +1,300 @@
+{
+	"info": {
+		"_postman_id": "de280277-4bd0-44e3-988b-2b2e79eb4e7f",
+		"name": "anserGateway ZT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "12189542"
+	},
+	"item": [
+		{
+			"name": "openid-configuration",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://keycloak.sdpmlab.org/realms/ZT/.well-known/openid-configuration"
+			},
+			"response": []
+		},
+		{
+			"name": "auth ",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": "{{server}}/realms/{{realm}}/protocol/openid-connect/auth"
+			},
+			"response": []
+		},
+		{
+			"name": "tokenAuth_admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "exp_userservice",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "UrPnxgyzZj1waUnF0wYYupUB87pafbcW",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "ansergateway@local.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "ansergateway",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://keycloak.sdpmlab.org/realms/ZT/protocol/openid-connect/token",
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "tokenAuth_testuser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "exp_userservice",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "UrPnxgyzZj1waUnF0wYYupUB87pafbcW",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "testuser@local.net",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "testuser",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://keycloak.sdpmlab.org/realms/ZT/protocol/openid-connect/token",
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "refreshAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "exp_userservice",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "UrPnxgyzZj1waUnF0wYYupUB87pafbcW",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "ansergateway@local.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "ansergateway",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "refresh_token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0MDY5MDBhZS0wOThjLTRhZTMtODg3NS00Y2MyZmFiYTgwMTkifQ.eyJleHAiOjE3MTYwMTUxMjMsImlhdCI6MTcxNjAxMzMyMywianRpIjoiY2U1ZDU5OGEtNGVlOC00Y2MxLTg0ZDgtOTI3ZWZhMWFmMzI2IiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay5zZHBtbGFiLm9yZy9yZWFsbXMvWlQiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLnNkcG1sYWIub3JnL3JlYWxtcy9aVCIsInN1YiI6IjA2ZjVkMTkxLTg3OWMtNDcxZS1hODU5LWVmOWZkYWNmOTUyNCIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJleHBfdXNlcnNlcnZpY2UiLCJzZXNzaW9uX3N0YXRlIjoiMWQ1ZTc0ZTMtZTIzYy00NWQ3LWE2MzMtYTc0MGFjZDM3ZTA1Iiwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiMWQ1ZTc0ZTMtZTIzYy00NWQ3LWE2MzMtYTc0MGFjZDM3ZTA1In0.SgaksDAeauVllcD84FmOx0KPuT3NIlkWATIfC2VWlrY",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://keycloak.sdpmlab.org/realms/ZT/protocol/openid-connect/token",
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/ztAPI",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/ztAPI?",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ztAPI"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/ztAuth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"ansergateway@local.com\",\n    \"pwd\": \"ansergateway\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/ztAdmin"
+			},
+			"response": []
+		},
+		{
+			"name": "introspect",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJGRVJnNVM4VjdoVUFzVEctc2JaNUZ1TnNHaC0wM0VXZUZnZFR0RVFKcUFrIn0.eyJleHAiOjE3MTYwMTM2MjMsImlhdCI6MTcxNjAxMzMyMywianRpIjoiZjQ2ODE1NWEtY2UxZS00Y2ZjLWI0ZDUtNWUwMWRmMmNkNDJjIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay5zZHBtbGFiLm9yZy9yZWFsbXMvWlQiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiMDZmNWQxOTEtODc5Yy00NzFlLWE4NTktZWY5ZmRhY2Y5NTI0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZXhwX3VzZXJzZXJ2aWNlIiwic2Vzc2lvbl9zdGF0ZSI6IjFkNWU3NGUzLWUyM2MtNDVkNy1hNjMzLWE3NDBhY2QzN2UwNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLXp0Iiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6IjFkNWU3NGUzLWUyM2MtNDVkNy1hNjMzLWE3NDBhY2QzN2UwNSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiYW5zZXJnYXRld2F5IGFuc2VyZ2F0ZXdheSIsInByZWZlcnJlZF91c2VybmFtZSI6ImFuc2VyZ2F0ZXdheUBsb2NhbC5jb20iLCJnaXZlbl9uYW1lIjoiYW5zZXJnYXRld2F5IiwiZmFtaWx5X25hbWUiOiJhbnNlcmdhdGV3YXkiLCJlbWFpbCI6ImFuc2VyZ2F0ZXdheUBsb2NhbC5jb20ifQ.fUHaqif3Z8WUoMzh2aDqbJYuwqQk8ni8bdfbjdzma4uxmUKgLEbENLtLsmmAWXmRm4RRZj9SeHo4QaQPcvUrxFcahS1uhBfa2kb2qLE0fpcnaSxlmUn8aIBRvHaBDRY_-bxXt5DnkOg2O2nLr4Yx--jSncG_oLadZs2PET8tRsKrB2B6Bb-d8LagSaxyyPG9yRTerPBWQrOYMU0G3B0oVBIig9ss5V_Ll1aq5UEshDwnmUiAI4lnCwfMZfG3Nj9oNG8eBpcGDyGXh2fzFxs7LfGA97ZCJ6Q0TicTYV2rhHotIwvCXlnlyJc5DwRrx7QeI6iqhPM8byKoLkpsiX-TBg",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "exp_userservice",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "UrPnxgyzZj1waUnF0wYYupUB87pafbcW",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://keycloak.sdpmlab.org/realms/ZT/protocol/openid-connect/token/introspect"
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "refresh_token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0MDY5MDBhZS0wOThjLTRhZTMtODg3NS00Y2MyZmFiYTgwMTkifQ.eyJleHAiOjE3MTYwMTQ2MzMsImlhdCI6MTcxNjAxMjgzMywianRpIjoiMjZlNGJmODctMDZkYy00MTIxLThmOGYtZTg4YjVkN2FkNjZkIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay5zZHBtbGFiLm9yZy9yZWFsbXMvWlQiLCJhdWQiOiJodHRwczovL2tleWNsb2FrLnNkcG1sYWIub3JnL3JlYWxtcy9aVCIsInN1YiI6IjA2ZjVkMTkxLTg3OWMtNDcxZS1hODU5LWVmOWZkYWNmOTUyNCIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJleHBfdXNlcnNlcnZpY2UiLCJzZXNzaW9uX3N0YXRlIjoiYTc0MzYyMzgtNTNkZC00ZmUwLWJhNDUtYjBkMzJiOTg1MTIxIiwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiYTc0MzYyMzgtNTNkZC00ZmUwLWJhNDUtYjBkMzJiOTg1MTIxIn0.Rh5vsY1LiexFnS2kACzHGm3j_FnSIhR7CHwaLzIKQkc",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "exp_userservice",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "UrPnxgyzZj1waUnF0wYYupUB87pafbcW",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://keycloak.sdpmlab.org/realms/ZT/protocol/openid-connect/logout"
+			},
+			"response": []
+		}
+	]
+}

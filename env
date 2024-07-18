@@ -37,3 +37,17 @@
 # servicediscovery.dataCenter = ''                                  # [optional]
 # servicediscovery.reloadTime = 300                                 # [optional] php json encode opt value to use when serializing requests
 # servicediscovery.LBStrategy = random
+
+#--------------------------------------------------------------------
+# Zero Trust
+#--------------------------------------------------------------------
+# zerotrust.enabled = 'true'  
+# zerotrust.host = 'https://keycloak.sdpmlab.org/'
+# zerotrust.tokenauthurl = 'realms/ZT/protocol/openid-connect/token'
+# zerotrust.introspecturl = 'realms/ZT/protocol/openid-connect/introspect'
+# zerotrust.realm = 'ZT'
+# zerotrust.clientID = 'exp_userservice'
+# zerotrust.clientSecret = 'UrPnxgyzZj1waUnF0wYYupUB87pafbcW'
+# zerotrust.grantType = 'password'
+# zerotrust.username = 'ansergateway@local.com'
+# zerotrust.password = 'ansergateway'

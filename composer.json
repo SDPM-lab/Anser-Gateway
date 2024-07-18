@@ -32,14 +32,16 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "swow/swow": "^1.2",
+        "swow/swow": "1.5.2",
         "workerman/workerman": "^4.1",
         "nikic/fast-route": "^1.3",
         "guzzlehttp/guzzle": "^7.0",
         "monolog/monolog": "^3.4",
         "vlucas/phpdotenv": "^5.5",
         "mikey179/vfsstream": "^1.6",
-        "sdpmlab/anser-action": "^0.3.7"
+        "sdpmlab/anser-action": "^0.3.7",
+        "stevenmaguire/oauth2-keycloak": "^5.1",
+        "symfony/var-dumper": "^6.4"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.17",

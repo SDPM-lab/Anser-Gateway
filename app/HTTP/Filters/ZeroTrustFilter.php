@@ -1,12 +1,13 @@
 <?php
 
-namespace Test\Support\Filters\Filters;
+namespace App\Filters;
 
 use Workerman\Protocols\Http\Request;
 use Workerman\Protocols\Http\Response;
 use AnserGateway\Filters\FilterInterface;
+use AnserGateway\ZeroTrust\ZeroTrust;
 
-class TestFilter2 implements FilterInterface
+class ZeroTrustFilter implements FilterInterface
 {
     /**
      *
@@ -17,17 +18,13 @@ class TestFilter2 implements FilterInterface
      */
     public function before(Request $request, $arguments = null)
     {
-        // if($arguments[0] != "test")
-        // {
-        //     var_dump($arguments[0]);
-        //     $response = new Response();
-        //     $response = $response->withStatus(404)->withBody(json_encode([
-        //         "bbb" => 5555
-        //     ]));
-        //     return $response;
-        // }
-        var_dump("TestFilter2 before");
-
+        $postData = $request->post();
+      
+        $data = ZeroTrust::verifyProcess($postData['username'], $postData['password'], $postData['serviceName'], $request, $postData['requestAction']);
+        $request->accessToken = $data["customClientAccessToken"];
+        $request->ticket      = $data["ticket"];
+        $request->username    = $postData['username'];
+        $request->password    = $postData['password'];
     }
 
     /**
@@ -44,7 +41,7 @@ class TestFilter2 implements FilterInterface
         // $decode = json_decode($result);
         // $decode->asd = "TestFilter2 after";
         // return $response->withBody(json_encode($decode));
-        var_dump("TestFilter2 after");
+        // var_dump("TestFilter2 after");
     }
 
 }
