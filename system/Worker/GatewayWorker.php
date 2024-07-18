@@ -18,8 +18,6 @@ use Workerman\Connection\TcpConnection;
 use AnserGateway\HTTPConnectionManager;
 use AnserGateway\Worker\WorkerRegistrar;
 use AnserGateway\ServiceDiscovery\ServiceDiscovery;
-use AnserGateway\ZeroTrust\ZeroTrust;
-use Config\ZeroTrust as ZeroTrustConfig;
 
 class GatewayWorker extends WorkerRegistrar
 {
@@ -30,8 +28,6 @@ class GatewayWorker extends WorkerRegistrar
     public static $router;
 
     public static $serviceDiscovery = null;
-
-    public static $zeroTrust = null;
 
     public function __construct()
     {
@@ -69,10 +65,6 @@ class GatewayWorker extends WorkerRegistrar
             Autoloader::$instance->composerRegister();
             require_once PROJECT_CONFIG . 'Service.php';
             //此處開始框架其他部件初始化
-            
-            ServiceList::setGlobalHandlerStack(HTTPConnectionManager::connectionMiddleware());
-            HTTPConnectionManager::$hostMaxConnectionNum = 500;
-            HTTPConnectionManager::$waitConnectionTimeout = 200;
 
             \AnserGateway\Worker\GatewayWorker::$routeList        = RouteCollector::loadRoutes();
             \AnserGateway\Worker\GatewayWorker::$router           = new Router(\AnserGateway\Worker\GatewayWorker::$routeList);
@@ -81,13 +73,10 @@ class GatewayWorker extends WorkerRegistrar
                 \AnserGateway\Worker\GatewayWorker::$serviceDiscovery = new ServiceDiscovery();
                 \AnserGateway\Worker\GatewayWorker::$serviceDiscovery->registerSelf($config->ssl ? 'https' : 'http', $config->listeningPort);
             }
-            
-            // ZeroTrust activation
-            if ($config->enableZeroTrust) {
-                \AnserGateway\ZeroTrust\ZeroTrust::initialization(new ZeroTrustConfig());
-            }
 
-           
+            ServiceList::setGlobalHandlerStack(HTTPConnectionManager::connectionMiddleware());
+            HTTPConnectionManager::$hostMaxConnectionNum = 150;
+            HTTPConnectionManager::$waitConnectionTimeout = 200;
 
             // Timer包co ，實作服務發現邏輯...
             if (!is_null(\AnserGateway\Worker\GatewayWorker::$serviceDiscovery)) {
@@ -105,7 +94,7 @@ class GatewayWorker extends WorkerRegistrar
                 );
             }
         };
-        
+
         // Worker
         $webWorker->onMessage = static function (TcpConnection $connection, Request $request) use ($config) {
             Coroutine::run(static function () use ($connection, $request, $config): void {

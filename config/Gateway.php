@@ -136,13 +136,6 @@ class Gateway extends BaseConfig
      */
     public $enableServiceDiscovery = false;
 
-    /**
-     * Select whether ZeroTrust is turned on.
-     *
-     * @var boolean
-     */
-    public $enableZeroTrust = false;
-
     // public function __construct()
     // {
     //     parent::__construct();
