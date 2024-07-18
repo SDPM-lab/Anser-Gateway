@@ -6,7 +6,7 @@ use AnserGateway\Filters\JsonResponseFilter;
 use App\Filters\TestFilter;
 use App\Filters\TestFilter2;
 use App\Filters\GlobalFilter;
-use App\Filters\ZeroTrustFilter;
+
 class Filters
 {
     /**
@@ -15,7 +15,6 @@ class Filters
      */
     public array $aliases = [
         'jsonResponse' => JsonResponseFilter::class,
-        'zeroTrust' =>  ZeroTrustFilter::class
     ];
 
     /**
@@ -27,7 +26,7 @@ class Filters
             // 'global' => ['except' => 'api/*'],
         ],
         'after' => [
-            // 'jsonResponse'
+            'jsonResponse'
         ],
     ];
 
